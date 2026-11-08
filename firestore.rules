@@ -1,0 +1,63 @@
+rules_version = '2';
+
+// ════════════════════════════════════════════════════════════════════════
+//  Shabbos Program: who can read and write what.
+//
+//  • A bachur can read and write only his own profile and progress.
+//  • He can change his name and sign-up, but never his role.
+//  • Staff can read everyone, and change nothing.
+//  • To make someone staff: in the Firebase console, open Firestore →
+//    users → his document, and change `role` from "bachur" to "staff".
+// ════════════════════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      let me = /databases/$(database)/documents/users/$(request.auth.uid);
+      return signedIn() && exists(me) && get(me).data.role == "staff";
+    }
+
+    function validProfile(d) {
+      return d.name is string && d.name.size() <= 120
+        && d.requirementIds is list && d.requirementIds.size() <= 50
+        && d.smartGoal is string && d.smartGoal.size() <= 2000;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isStaff());
+
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(
+             ["name", "email", "role", "requirementIds", "smartGoal", "createdAt", "updatedAt"])
+        && request.resource.data.role == "bachur"
+        && request.resource.data.email == request.auth.token.email
+        && validProfile(request.resource.data);
+
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(["name", "requirementIds", "smartGoal", "updatedAt"])
+        && validProfile(request.resource.data);
+    }
+
+    // Document id is "{uid}_{week}", e.g. "abc123_2026-11-08".
+    match /progress/{docId} {
+      allow read: if signedIn() && (docId.split("_")[0] == request.auth.uid || isStaff());
+
+      allow create, update: if signedIn()
+        && request.resource.data.keys().hasOnly(["uid", "week", "entries", "updatedAt"])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.week is string
+        && request.resource.data.week.matches("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
+        && docId == request.auth.uid + "_" + request.resource.data.week
+        && request.resource.data.entries is map
+        && request.resource.data.entries.size() <= 30;
+
+      allow delete: if signedIn() && docId.split("_")[0] == request.auth.uid;
+    }
+  }
+}
