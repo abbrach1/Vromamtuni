@@ -128,8 +128,16 @@ export function ProvisionScreen() {
   }, [created, authed, mark]);
 
   async function downloadApk() {
+    // Ask for a short-lived link with the sign-in in a header (never in the
+    // URL, where it would end up in history and logs), then open the link.
+    const res = await fetch("/api/staff/tablets/apk", {
+      headers: { authorization: `Bearer ${await token()}` },
+      cache: "no-store",
+    });
+    const data = (await res.json().catch(() => ({}))) as { download_url?: unknown };
+    if (!res.ok || typeof data.download_url !== "string") return;
     const a = document.createElement("a");
-    a.href = `/api/staff/tablets/apk?token=${encodeURIComponent(await token())}`;
+    a.href = data.download_url;
     a.rel = "noopener";
     document.body.appendChild(a);
     a.click();
