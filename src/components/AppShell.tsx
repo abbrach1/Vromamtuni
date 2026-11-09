@@ -29,7 +29,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const nav = !profile
     ? []
     : isStaff
-      ? [{ href: "/staff", label: m.navOverview }]
+      ? [
+          { href: "/staff", label: m.navOverview },
+          { href: "/staff/tablets", label: m.navTablets },
+        ]
       : [
           { href: "/progress", label: m.navMyWeek },
           { href: "/sign-up", label: m.navSignUp },
