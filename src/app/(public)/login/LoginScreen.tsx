@@ -120,7 +120,7 @@ export function LoginScreen() {
       </div>
       <div className="auth__box">
         <div className="auth__head">
-          <Logo size={88} className="auth__mark" />
+          <Logo size={128} className="auth__mark" />
           <p className="eyebrow">{t(program.yeshivaName)}</p>
           <h1>{t(program.name)}</h1>
           <p className="muted small">{m.tagline}</p>

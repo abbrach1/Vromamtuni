@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Frank_Ruhl_Libre, Heebo, Inter, Source_Serif_4 } from "next/font/google";
+import { Cormorant_Garamond, Frank_Ruhl_Libre, Source_Serif_4 } from "next/font/google";
 import { program } from "@/config/program";
 import { isConfigured } from "@/lib/env";
 import { LangProvider } from "@/i18n/client";
@@ -8,13 +8,25 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { SetupScreen } from "@/components/SetupScreen";
 import "./globals.css";
 
-const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
-const serif = Source_Serif_4({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
-const sansHe = Heebo({ subsets: ["hebrew", "latin"], variable: "--font-sans-he", display: "swap" });
-const serifHe = Frank_Ruhl_Libre({
+// Classical capitals like the logo's lettering, a sturdy book face for reading,
+// and Frank Ruhl for Hebrew.
+const display = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+  display: "swap",
+});
+const body = Source_Serif_4({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-body",
+  display: "swap",
+});
+const hebrew = Frank_Ruhl_Libre({
   subsets: ["hebrew", "latin"],
-  weight: ["500", "700"],
-  variable: "--font-serif-he",
+  weight: ["400", "500", "700"],
+  variable: "--font-he",
   display: "swap",
 });
 
@@ -32,8 +44,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f5f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1220" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f0e7" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1714" },
   ],
 };
 
@@ -46,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={lang}
       dir={m.dir}
-      className={`${sans.variable} ${serif.variable} ${sansHe.variable} ${serifHe.variable}`}
+      className={`${display.variable} ${body.variable} ${hebrew.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="topbar">
         <div className="topbar__inner">
           <Link href="/" className="brand">
-            <Logo size={32} className="brand__mark" />
+            <Logo size={44} className="brand__mark" />
             <span className="brand__text">
               <span className="brand__name">{t(program.name)}</span>
               <span className="brand__yeshiva">{t(program.yeshivaName)}</span>

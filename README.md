@@ -22,9 +22,11 @@ A few rules:
 
 Interface text (buttons, messages) is in [`src/i18n/messages.ts`](src/i18n/messages.ts), in English and Hebrew.
 
-### Logo
+### Logo and look
 
-Save the yeshiva's logo as **`public/logo.png`** (a square image works best). It appears on the login screen and in the top bar. Until the file is there, a simple candles icon is shown.
+The yeshiva's logo is at **`public/logo.png`** and is used as-is on the login screen, in the top bar and as the app icon (`src/app/icon.png`, `src/app/apple-icon.png`). The design takes its cue from the logo: its warm taupe on paper, classical serif capitals (Cormorant Garamond, with Source Serif for reading and Frank Ruhl Libre for Hebrew), and fine ruled lines. Colors are set once at the top of `src/app/globals.css`.
+
+The logo file is small (197 px wide), so it looks slightly soft on sharp phone screens. For a crisper result, replace `public/logo.png` with a larger version (500 px or more, transparent background) and keep the same name.
 
 ---
 
