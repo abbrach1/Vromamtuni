@@ -8,5 +8,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function SignUpPage() {
-  return <SignUpScreen />;
+  return (
+    <main>
+      <SignUpScreen />
+    </main>
+  );
 }

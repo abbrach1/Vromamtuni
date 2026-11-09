@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { pillars, requirementById, requirements, requirementsForPillar } from "@/config/program";
 import { saveSignUp, type Profile } from "@/lib/db";
+import { TabletPin } from "./TabletPin";
 import { useLang } from "@/i18n/client";
 import { useAuth } from "@/components/AuthProvider";
 import { CheckIcon } from "@/components/icons";
@@ -11,10 +12,26 @@ import { CheckIcon } from "@/components/icons";
 export function SignUpScreen() {
   const auth = useAuth();
   if (auth.status !== "signed-in" || !auth.profile) return null;
-  return <SignUpForm profile={auth.profile} />;
+  return (
+    <SignUpForm profile={auth.profile}>
+      {auth.profile.role === "bachur" && <TabletPin />}
+    </SignUpForm>
+  );
 }
 
-function SignUpForm({ profile }: { profile: Profile }) {
+/**
+ * The sign-up form. In the app it goes on to "My week"; on the wall tablet
+ * `onSaved` takes over instead.
+ */
+export function SignUpForm({
+  profile,
+  onSaved,
+  children,
+}: {
+  profile: Profile;
+  onSaved?: () => void;
+  children?: React.ReactNode;
+}) {
   const { m, t } = useLang();
   const router = useRouter();
   const isNew = profile.requirementIds.length === 0;
@@ -45,7 +62,8 @@ function SignUpForm({ profile }: { profile: Profile }) {
     setPending(true);
     try {
       await saveSignUp(profile.id, { name, requirementIds: ids, smartGoal: goal });
-      router.push(isNew ? "/progress?welcome=1" : "/progress?saved=1");
+      if (onSaved) onSaved();
+      else router.push(isNew ? "/progress?welcome=1" : "/progress?saved=1");
     } catch {
       setError(m.errSaveSignUp);
       setPending(false);
@@ -53,7 +71,7 @@ function SignUpForm({ profile }: { profile: Profile }) {
   }
 
   return (
-    <main className="page">
+    <div className="page">
       <div className="page-head">
         <span className="eyebrow">{isNew ? m.welcome : m.mySignUp}</span>
         <h1>{isNew ? m.chooseCommitments : m.yourCommitments}</h1>
@@ -124,6 +142,8 @@ function SignUpForm({ profile }: { profile: Profile }) {
           </fieldset>
         ))}
 
+        {children}
+
         <div className="savebar">
           {error && (
             <p className="alert alert--error" role="alert">
@@ -141,6 +161,6 @@ function SignUpForm({ profile }: { profile: Profile }) {
           </button>
         </div>
       </form>
-    </main>
+    </div>
   );
 }

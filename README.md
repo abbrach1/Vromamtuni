@@ -4,6 +4,7 @@ A web app for the yeshiva's Shabbos Program. Bachurim sign up for the parts of t
 
 - **Sign-up:** a bachur enters his name and ticks any of the 10 requirements, grouped by pillar. Choosing Sur Me'ra opens a field for his SMART goal. He can change his sign-up at any time.
 - **My week:** runs Sunday to Shabbos, labelled with the parsha, with previous/next week arrows. Each requirement has a simple tap input, a "Met" / "In progress" badge and a progress line. A summary at the top shows "X of Y goals met this week". Every tap saves by itself, and it still works with no signal: changes are kept on the phone and sync when it's back online.
+- **Wall tablet:** a tablet on the wall of the beis medrash at `/kiosk`. A bachur taps his name, types his 4-digit PIN, marks his week with big buttons and taps **Done**. Bachurim without a phone can join right there with just a name and a PIN. It signs out by itself if someone walks away.
 - **Staff overview:** a table of every bachur with his requirements, goals met this week and a 4-week trend. Tap a name to see that bachur's week (read-only). It has week navigation and a CSV export.
 
 **Stack:** Next.js (hosted on Vercel) plus Firebase (Authentication for logins, Firestore for data). Both have free tiers that easily cover a yeshiva.
@@ -70,7 +71,34 @@ He'll see the staff overview the next time he opens the app. Only someone with a
 
 To remove a bachur, delete his user in **Authentication → Users**, and his document in `users` (and his `progress` documents, if you want his history gone).
 
-### 4. Optional: password-reset email in Hebrew
+### 4. The wall tablet
+
+The tablet page checks PINs on the server, so it needs two more settings on Vercel (Project → Settings → Environment Variables), then a redeploy:
+
+| Name | Value |
+| --- | --- |
+| `KIOSK_CODE` | Any long, random code you make up. Staff type it once on each tablet. |
+| `FIREBASE_SERVICE_ACCOUNT` | Firebase console → Project settings → **Service accounts** → **Generate new private key**. Open the downloaded file and paste its whole contents as the value. |
+
+The service account key gives full access to the database: keep it secret. Only paste it into Vercel, never into the code, and never with a `NEXT_PUBLIC_` name.
+
+**Setting up a tablet**
+
+1. On the tablet, open `https://your-site.vercel.app/kiosk`. It asks for the tablet code: enter `KIOSK_CODE`.
+2. Add it to the home screen so it opens full screen: in Safari, Share → **Add to Home Screen**; in Chrome, ⋮ → **Add to Home screen** (or **Install app**).
+3. Lock the tablet to the app: on an iPad, **Settings → Accessibility → Guided Access**; on Android, **Settings → Security → App pinning**. Also set the screen not to turn off while charging (iPad: Settings → Display → Auto-Lock → Never).
+
+**How bachurim use it**
+
+- **Tap your name**, enter your **PIN**, mark the week, tap **Done**. After 90 seconds without a tap it asks "Still there?" and signs out 15 seconds later. Changes are saved before it signs out.
+- **New here?** joins with a name and a PIN, then picks commitments, all on the tablet. No email or phone needed.
+- **Already registered on a phone?** Set a tablet PIN in the app under **My sign-up**.
+- **Forgot the PIN?** Staff open his page in the overview and tap **Reset tablet PIN**. Next time at the tablet he chooses a new one.
+- Five wrong PINs lock that name for 5 minutes.
+
+The tablet keeps no sign-in or data on the device after Done. It can show any bachur's week only after his PIN is checked, and then the same security rules apply as on his phone.
+
+### 5. Optional: password-reset email in Hebrew
 
 **Authentication → Templates → Password reset → Edit (pencil) → Template language.** The app already asks Firebase to send in the language the bachur is using.
 
@@ -104,7 +132,7 @@ The Firebase emulators run a private copy of Authentication and Firestore on you
 npx firebase-tools emulators:start --project demo-shabbos
 ```
 
-In `.env.local`, use `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-shabbos`, any value for the API key, and add `NEXT_PUBLIC_FIREBASE_EMULATORS=1`. The emulator dashboard at http://localhost:4000 lets you set someone's `role` to `staff`.
+In `.env.local`, use `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-shabbos`, any value for the API key, and add `NEXT_PUBLIC_FIREBASE_EMULATORS=1`. To try the wall tablet locally, also add `KIOSK_CODE=test`, `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080` and `FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099`. The emulator dashboard at http://localhost:4000 lets you set someone's `role` to `staff`.
 
 ### Checks
 
@@ -128,12 +156,15 @@ npm run typecheck
 | `src/lib/rules.ts` | Turns logged entries into Met / In progress and progress lines (shared by all screens and the CSV) |
 | `src/lib/db.ts` | Reading and writing Firestore |
 | `firestore.rules` | Who may read and write what |
+| `src/app/kiosk/`, `src/components/kiosk/` | The wall tablet |
+| `src/app/api/kiosk/` | Server checks for the tablet: names, PINs (hashed, with lockout), joining |
 | `src/i18n/` | Interface text in English and Hebrew; the chosen language is kept in a cookie |
 | `src/app/` | Screens: `login`, `sign-up`, `progress`, `staff`, `staff/bachur/[id]` |
 
 **Data** (Firestore):
 
 - `users/{uid}`: `name`, `email`, `role` (`bachur` / `staff`), `requirementIds`, `smartGoal`
+- `kioskPins/{uid}`: hashed tablet PIN and wrong-try count. Only the server can read it.
 - `progress/{uid}_{week}`: `uid`, `week` (that week's Sunday, `YYYY-MM-DD`), `entries`, with one entry per requirement, e.g. `{ "torah-halacha": { "marks": ["sun", "mon"] } }`
 
 **Rules worth knowing:**

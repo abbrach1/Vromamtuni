@@ -9,6 +9,7 @@ import { weeksNeeded, type ProgressByWeek } from "@/lib/rules";
 import { useLang } from "@/i18n/client";
 import { useAuth } from "@/components/AuthProvider";
 import { ProgressBoard } from "./ProgressBoard";
+import { ResetPinButton } from "./ResetPinButton";
 
 interface Props {
   week: ISODate;
@@ -73,6 +74,9 @@ export function ProgressScreen({ week, currentWeek, today, weekNav, bachurId, ba
           <p className="muted small" dir="ltr" style={{ textAlign: "start" }}>
             {profile.email}
           </p>
+        )}
+        {readOnly && isStaffViewer && profile && (
+          <ResetPinButton bachurId={profile.id} name={profile.name || profile.email} />
         )}
       </div>
       <div className="stack">

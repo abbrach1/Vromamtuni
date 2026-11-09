@@ -59,5 +59,8 @@ service cloud.firestore {
 
       allow delete: if signedIn() && docId.split("_")[0] == request.auth.uid;
     }
+
+    // kioskPins/{uid}: hashed wall-tablet PINs. No rule here, so no app
+    // user can read or write them; only the server (Admin SDK) can.
   }
 }
