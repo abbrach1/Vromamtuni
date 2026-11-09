@@ -4,7 +4,7 @@
  * Two origins, deliberately separate:
  *  - OUR_ORIGIN  — the PDCA fleet backend. Check-in, commands, and the default
  *                  OTA manifest live here. Known and fixed; never his.
- *  - DATA_ORIGIN — the Shabbos Program site (Vercel + Firebase). The tablet
+ *  - DATA_ORIGIN — the program site (Vercel + Firebase). The tablet
  *                  shows its /kiosk page, so the talmidim see exactly what
  *                  the web app shows, and every Vercel deploy reaches the
  *                  tablets straight away. Set by the publish workflow from the

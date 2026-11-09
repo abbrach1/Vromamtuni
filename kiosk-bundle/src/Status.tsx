@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { onStatus, type RuntimeStatus } from "./runtime";
 
 /**
- * The device status screen: shown when the Shabbos Program site can't be
+ * The device status screen: shown when the program site can't be
  * reached (or isn't configured), with what the tablet knows about itself:
  * identity, check-in, OTA channel, confirm-or-rollback.
  */
@@ -27,7 +27,7 @@ export function Status({ note }: { note?: string }) {
 
   return (
     <main style={styles.main}>
-      <h1 style={styles.h1}>Shabbos Program</h1>
+      <h1 style={styles.h1}>ורוממתנו · Vromamtanu</h1>
       <p style={styles.sub}>{note ?? "Device status"}</p>
       <div style={styles.grid}>
         {rows.map(([k, v]) => (
@@ -50,14 +50,14 @@ const styles: Record<string, React.CSSProperties> = {
     margin: 0,
     padding: 24,
     boxSizing: "border-box",
-    background: "#f5f0e7",
-    color: "#2e2622",
+    background: "#0c0b09",
+    color: "#f0e8d6",
     fontFamily: "Georgia, 'Times New Roman', serif",
   },
   h1: { fontSize: 20, fontWeight: 600, margin: "0 0 4px" },
-  sub: { color: "#6b574b", fontSize: 15, margin: "0 0 20px" },
+  sub: { color: "#d4b062", fontSize: 15, margin: "0 0 20px" },
   grid: { display: "flex", flexDirection: "column", gap: 6, maxWidth: 560 },
   row: { display: "flex", justifyContent: "space-between", gap: 16, fontSize: 15 },
-  k: { color: "#6b574b" },
+  k: { color: "#c4b89e" },
   v: { fontVariantNumeric: "tabular-nums", wordBreak: "break-all", textAlign: "right" },
 };

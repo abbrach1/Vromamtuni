@@ -1,6 +1,6 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────
- *  SHABBOS PROGRAM: PROGRAM RULES
+ *  ורוממתנו (VROMAMTANU): PROGRAM RULES
  * ─────────────────────────────────────────────────────────────────────────
  *
  *  Everything about the program lives in this one file: the pillars, the
@@ -111,13 +111,18 @@ export interface Requirement {
 // ── General settings ──────────────────────────────────────────────────────
 
 export const program = {
-  name: { en: "Shabbos Program", he: "תוכנית שבת" } as Text,
+  name: { en: "Vromamtanu", he: "ורוממתנו" } as Text,
+  /** The line under the name. The logo carries it in English, so both languages use the English. */
+  tagline: { en: "Striving to New Heights", he: "Striving to New Heights" } as Text,
   yeshivaName: { en: "Yeshiva Toras Chaim", he: "ישיבת תורת חיים" } as Text,
   /**
-   * The yeshiva's logo. Put the image file in the `public` folder with this
+   * The program's logo. Put the image file in the `public` folder with this
    * name. If the file isn't there, a simple candles icon is shown instead.
+   * `logoDark` is the same logo for the dark theme (gold on transparent);
+   * leave it empty to use `logo` in both themes.
    */
   logo: "/logo.png",
+  logoDark: "/logo-gold.png",
   /** Language the app opens in. Everyone can switch with the language button. */
   defaultLang: "en" as Lang,
   /**

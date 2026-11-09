@@ -1,11 +1,11 @@
-# Shabbos-Program kiosk bundle
+# ורוממתנו (Vromamtanu) kiosk bundle
 
 The wall-tablet kiosk, packaged to run inside the **PDCA kiosk native shell**
 (device-owner lockdown, remote management) instead of a hand-locked browser.
 This folder builds the **OTA bundle** the shell downloads and runs — the tablet
 *is* this bundle, served locally; it is not a web page in a browser.
 
-**What the tablet shows:** the Shabbos Program's own `/kiosk` page, full
+**What the tablet shows:** the program's own `/kiosk` page, full
 screen: the same screens the talmidim use on the web (tap your name, PIN,
 the week, commitments, joining), in English or Hebrew. It's one copy of the
 code, so the tablet and the web app can never drift apart, and every Vercel

@@ -1,34 +1,35 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Shabbos Program · Yeshiva Toras Chaim
-   Look and feel taken from the yeshiva's logo: one warm taupe on paper,
-   classical serif capitals, fine ruled lines. Think printed program or
-   ledger, not app.
+   ורוממתנו · Striving to New Heights · Yeshiva Toras Chaim
+   Look and feel taken from the program's logo: gold on black, black-letter
+   Hebrew, classical serif capitals, fine ruled lines. Think bound sefer or
+   printed program, not app. Light theme is ink and gold on ivory, like the
+   logo on paper; dark theme is gold on black, like the foil-stamped cover.
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
   color-scheme: light;
-  --paper: #f5f0e7;
-  --sheet: #fbf8f2;
-  --ink: #2e2622;
-  --ink-soft: #5c5049;
-  --faint: #9a8f86;
-  --rule: #ddd3c5;
-  --rule-strong: #c4b5a3;
+  --paper: #f4efe4;
+  --sheet: #faf7f0;
+  --ink: #16130f;
+  --ink-soft: #4f473d;
+  --faint: #8d8476;
+  --rule: #e0d6c2;
+  --rule-strong: #c2ac7e;
 
-  --brand: #9c8679;          /* the logo's color */
-  --brand-deep: #6b574b;     /* filled boxes, links, buttons */
-  --brand-wash: #ece3d7;
-  --on-brand: #fbf8f2;
+  --brand: #7f611f;          /* gold, deep enough to read on ivory */
+  --brand-deep: #16130f;     /* filled boxes, links, buttons: black */
+  --brand-wash: #ece3cf;
+  --on-brand: #e2c47c;       /* gold on the black buttons */
 
   --met: #4f6b3e;
-  --progress: #9a6a1f;
+  --progress: #9a5f1a;
   --notmet: #9b4635;
 
   --trend-all: #6f8a4f;
   --trend-some: #c9a04f;
-  --trend-none: #ddd3c5;
+  --trend-none: #e0d6c2;
 
-  --focus: #6b574b;
+  --focus: #7f611f;
   --tap: 44px;
   --gutter: 18px;
   --measure: 680px;
@@ -37,47 +38,47 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper: #1b1714;
-    --sheet: #221d19;
-    --ink: #eee6da;
-    --ink-soft: #c3b6a8;
-    --faint: #8a7e74;
-    --rule: #3a322c;
-    --rule-strong: #54483f;
-    --brand: #b29d8f;
-    --brand-deep: #b29d8f;
-    --brand-wash: #2e2621;
-    --on-brand: #1b1714;
+    --paper: #0c0b09;
+    --sheet: #15130f;
+    --ink: #f0e8d6;
+    --ink-soft: #c4b89e;
+    --faint: #8a7f69;
+    --rule: #2a251c;
+    --rule-strong: #4d4128;
+    --brand: #d4b062;
+    --brand-deep: #d4b062;
+    --brand-wash: #221c11;
+    --on-brand: #0c0b09;
     --met: #a9c48f;
-    --progress: #e0b768;
+    --progress: #e8a25a;
     --notmet: #e39a86;
     --trend-all: #7f9c5d;
-    --trend-some: #c9a04f;
-    --trend-none: #3a322c;
-    --focus: #d4c2b4;
+    --trend-some: #b8913f;
+    --trend-none: #2a251c;
+    --focus: #e6cc8a;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #1b1714;
-  --sheet: #221d19;
-  --ink: #eee6da;
-  --ink-soft: #c3b6a8;
-  --faint: #8a7e74;
-  --rule: #3a322c;
-  --rule-strong: #54483f;
-  --brand: #b29d8f;
-  --brand-deep: #b29d8f;
-  --brand-wash: #2e2621;
-  --on-brand: #1b1714;
+  --paper: #0c0b09;
+  --sheet: #15130f;
+  --ink: #f0e8d6;
+  --ink-soft: #c4b89e;
+  --faint: #8a7f69;
+  --rule: #2a251c;
+  --rule-strong: #4d4128;
+  --brand: #d4b062;
+  --brand-deep: #d4b062;
+  --brand-wash: #221c11;
+  --on-brand: #0c0b09;
   --met: #a9c48f;
-  --progress: #e0b768;
+  --progress: #e8a25a;
   --notmet: #e39a86;
   --trend-all: #7f9c5d;
-  --trend-some: #c9a04f;
-  --trend-none: #3a322c;
-  --focus: #d4c2b4;
+  --trend-some: #b8913f;
+  --trend-none: #2a251c;
+  --focus: #e6cc8a;
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
@@ -170,7 +171,7 @@ button:disabled {
   white-space: nowrap;
 }
 
-/* Spaced capitals, as in "YESHIVA TORAS CHAIM" on the logo. */
+/* Spaced capitals, as in "STRIVING TO NEW HEIGHTS" on the logo. */
 .caps,
 .eyebrow,
 .pillar__title,
@@ -262,7 +263,7 @@ button:disabled {
 }
 
 .brand__mark.logo-img {
-  width: 44px;
+  width: 92px;
   height: auto;
 }
 
@@ -277,6 +278,16 @@ button:disabled {
   font-family: var(--font-display), Georgia, serif;
   font-weight: 600;
   font-size: 1.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand__tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.0625rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -595,9 +606,10 @@ button:disabled {
 }
 
 .auth__mark.logo-img {
-  width: 132px;
+  width: 300px;
+  max-width: 100%;
   height: auto;
-  margin-bottom: 4px;
+  margin: 2px 0 6px;
 }
 
 .auth__head .muted {
@@ -1500,8 +1512,13 @@ details.req__about p {
 }
 
 @media (max-width: 420px) {
-  .brand__yeshiva {
+  .brand__yeshiva,
+  .brand__tagline {
     display: none;
+  }
+
+  .brand__mark.logo-img {
+    width: 80px;
   }
 
   .brand__name {
@@ -1515,20 +1532,41 @@ details.req__about p {
   }
 }
 
-/* The logo is drawn in one colour on a transparent background; in dark mode
-   it sits on a paper-coloured disc, like a seal. */
+/* The logo comes in two inks: black and gold for the light theme, all gold
+   for the dark theme. Logo.tsx renders both; only one shows. */
+:root .logo-img--dark {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-img {
-    background: #f5f0e7;
-    border-radius: 50%;
-    padding: 3px;
+  :root:not([data-theme="light"]) .logo-img--light {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .logo-img--dark {
+    display: block;
   }
 }
 
-:root[data-theme="dark"] .logo-img {
-  background: #f5f0e7;
-  border-radius: 50%;
-  padding: 3px;
+:root[data-theme="dark"] .logo-img--light {
+  display: none;
+}
+
+:root[data-theme="dark"] .logo-img--dark {
+  display: block;
+}
+
+/* Where the logo shows, it is the program's name, so the written name is
+   kept for screen readers only. Without a logo file, the name shows. */
+.logo-img ~ .brand__text .brand__name,
+.logo-img ~ .auth__name,
+.logo-img ~ .kiosk__titles .kiosk__name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 @media (min-width: 721px) {
@@ -1578,12 +1616,12 @@ details.req__about p {
 }
 
 .kiosk__logo.logo-img {
-  width: 104px;
+  width: 230px;
   height: auto;
 }
 
 .kiosk__logo--small.logo-img {
-  width: 56px;
+  width: 116px;
 }
 
 .kiosk__titles {
@@ -1596,6 +1634,14 @@ details.req__about p {
 
 .kiosk__titles h1 {
   font-size: 3rem;
+}
+
+.kiosk__tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 1.1;
 }
 
 .kiosk__week {
@@ -1880,8 +1926,12 @@ details.req__about p {
     font-size: 2rem;
   }
 
+  .kiosk__tagline {
+    font-size: 1.5rem;
+  }
+
   .kiosk__logo.logo-img {
-    width: 72px;
+    width: 150px;
   }
 
   .kiosk__sessionbar {

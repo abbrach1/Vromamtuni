@@ -1,6 +1,6 @@
-# Shabbos Program · Yeshiva Toras Chaim
+# ורוממתנו · Striving to New Heights · Yeshiva Toras Chaim
 
-A web app for the yeshiva's Shabbos Program. Bachurim sign up for the parts of the program they're taking on and mark their progress each week from their phones. Staff see everyone at a glance. The whole app works in **English** (Ashkenazi spelling) and **Hebrew** (right-to-left), with a language button on every screen.
+A web app for ורוממתנו (Vromamtanu), the yeshiva's 5787 program. Bachurim sign up for the parts of the program they're taking on and mark their progress each week from their phones. Staff see everyone at a glance. The whole app works in **English** (Ashkenazi spelling) and **Hebrew** (right-to-left), with a language button on every screen.
 
 - **Sign-up:** a bachur enters his name and ticks any of the 10 requirements, grouped by pillar. Choosing Sur Me'ra opens a field for his SMART goal. He can change his sign-up at any time.
 - **My week:** runs Sunday to Shabbos, labelled with the parsha, with previous/next week arrows. Each requirement has a simple tap input, a "Met" / "In progress" badge and a progress line. A summary at the top shows "X of Y goals met this week". Every tap saves by itself, and it still works with no signal: changes are kept on the phone and sync when it's back online.
@@ -25,9 +25,14 @@ Interface text (buttons, messages) is in [`src/i18n/messages.ts`](src/i18n/messa
 
 ### Logo and look
 
-The yeshiva's logo is at **`public/logo.png`** and is used as-is on the login screen, in the top bar and as the app icon (`src/app/icon.png`, `src/app/apple-icon.png`). The design takes its cue from the logo: its warm taupe on paper, classical serif capitals (Cormorant Garamond, with Source Serif for reading and Frank Ruhl Libre for Hebrew), and fine ruled lines. Colors are set once at the top of `src/app/globals.css`.
+The ורוממתנו logo is used on the login screen, in the top bar and on the wall tablet. It comes in two files, both 1000 px wide on a transparent background:
 
-The logo file is small (197 px wide), so it looks slightly soft on sharp phone screens. For a crisper result, replace `public/logo.png` with a larger version (500 px or more, transparent background) and keep the same name.
+- **`public/logo.png`**: black lettering in a gold frame, for the light theme.
+- **`public/logo-gold.png`**: all gold, for the dark theme.
+
+The app icons (`src/app/icon.png`, `src/app/apple-icon.png`) are the gold logo on black. Where the logo shows, it stands in for the program's name, so the written name is kept for screen readers only.
+
+The design takes its cue from the logo: gold on black, with a royal feel. The light theme is black ink and gold on ivory, like the logo printed on paper; the dark theme is gold on black, like a foil-stamped cover. Type is classical serif (Cormorant Garamond, with Source Serif for reading and Frank Ruhl Libre for Hebrew) with fine ruled lines. Colors are set once at the top of `src/app/globals.css`.
 
 ---
 

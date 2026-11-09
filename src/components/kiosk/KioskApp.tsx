@@ -274,10 +274,11 @@ export function KioskApp({
 
   const header = (
     <header className="kiosk__head">
-      <Logo size={96} className="kiosk__logo" />
+      <Logo size={230} className="kiosk__logo" />
       <div className="kiosk__titles">
         <span className="eyebrow">{t(program.yeshivaName)}</span>
-        <h1>{t(program.name)}</h1>
+        <h1 className="kiosk__name">{t(program.name)}</h1>
+        <p className="kiosk__tagline">{t(program.tagline)}</p>
         <p className="kiosk__week">
           {parsha && <strong>{parsha}</strong>}
           <span>{dateLabel}</span>
@@ -543,7 +544,7 @@ function KioskSession({
   return (
     <main className="kiosk kiosk--session">
       <header className="kiosk__sessionbar">
-        <Logo size={52} className="kiosk__logo kiosk__logo--small" />
+        <Logo size={116} className="kiosk__logo kiosk__logo--small" />
         <h1>{first ? m.hi(first) : "…"}</h1>
         {!editing && profile && (
           <button type="button" className="btn kiosk__edit" onClick={() => setEditing(true)}>

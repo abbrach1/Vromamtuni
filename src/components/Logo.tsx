@@ -4,15 +4,21 @@ import { useEffect, useRef, useState } from "react";
 import { program } from "@/config/program";
 import { CandlesIcon } from "./icons";
 
-/** The yeshiva's logo from /public, or a candles mark if there's no logo file. */
+/**
+ * The program's logo from /public, or a candles mark if there's no logo file.
+ * When `program.logoDark` is set, both versions are rendered and the CSS shows
+ * the one that suits the theme. `size` is the width in pixels.
+ */
 export function Logo({ size, className }: { size: number; className: string }) {
   const [failed, setFailed] = useState(!program.logo);
-  const img = useRef<HTMLImageElement>(null);
+  const light = useRef<HTMLImageElement>(null);
+  const dark = useRef<HTMLImageElement>(null);
 
-  // The image may fail before React is listening, so check once on mount too.
+  // An image may fail before React is listening, so check once on mount too.
   useEffect(() => {
-    const el = img.current;
-    if (el && el.complete && el.naturalWidth === 0) setFailed(true);
+    for (const el of [light.current, dark.current]) {
+      if (el && el.complete && el.naturalWidth === 0) setFailed(true);
+    }
   }, []);
 
   if (failed) {
@@ -22,16 +28,29 @@ export function Logo({ size, className }: { size: number; className: string }) {
       </span>
     );
   }
+  const dual = Boolean(program.logoDark);
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      ref={img}
-      src={program.logo}
-      alt=""
-      width={size}
-      height={size}
-      className={`${className} logo-img`}
-      onError={() => setFailed(true)}
-    />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={light}
+        src={program.logo}
+        alt=""
+        width={size}
+        className={`${className} logo-img${dual ? " logo-img--light" : ""}`}
+        onError={() => setFailed(true)}
+      />
+      {dual && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          ref={dark}
+          src={program.logoDark}
+          alt=""
+          width={size}
+          className={`${className} logo-img logo-img--dark`}
+          onError={() => setFailed(true)}
+        />
+      )}
+    </>
   );
 }
