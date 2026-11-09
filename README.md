@@ -1,6 +1,6 @@
-# Shabbos Program · Yeshiva Toras Chaim
+# ורוממתנו · Striving to New Heights · Yeshiva Toras Chaim
 
-A web app for the yeshiva's Shabbos Program. Bachurim sign up for the parts of the program they're taking on and mark their progress each week from their phones. Staff see everyone at a glance. The whole app works in **English** (Ashkenazi spelling) and **Hebrew** (right-to-left), with a language button on every screen.
+A web app for ורוממתנו (Vromamtanu), the yeshiva's 5787 program. Bachurim sign up for the parts of the program they're taking on and mark their progress each week from their phones. Staff see everyone at a glance. The whole app works in **English** (Ashkenazi spelling) and **Hebrew** (right-to-left), with a language button on every screen.
 
 - **Sign-up:** a bachur enters his name and ticks any of the 10 requirements, grouped by pillar. Choosing Sur Me'ra opens a field for his SMART goal. He can change his sign-up at any time.
 - **My week:** runs Sunday to Shabbos, labelled with the parsha, with previous/next week arrows. Each requirement has a simple tap input, a "Met" / "In progress" badge and a progress line. A summary at the top shows "X of Y goals met this week". Every tap saves by itself, and it still works with no signal: changes are kept on the phone and sync when it's back online.
@@ -25,9 +25,14 @@ Interface text (buttons, messages) is in [`src/i18n/messages.ts`](src/i18n/messa
 
 ### Logo and look
 
-The yeshiva's logo is at **`public/logo.png`** and is used as-is on the login screen, in the top bar and as the app icon (`src/app/icon.png`, `src/app/apple-icon.png`). The design takes its cue from the logo: its warm taupe on paper, classical serif capitals (Cormorant Garamond, with Source Serif for reading and Frank Ruhl Libre for Hebrew), and fine ruled lines. Colors are set once at the top of `src/app/globals.css`.
+The ורוממתנו logo is used on the login screen, in the top bar and on the wall tablet. It comes in two files, both 1000 px wide on a transparent background:
 
-The logo file is small (197 px wide), so it looks slightly soft on sharp phone screens. For a crisper result, replace `public/logo.png` with a larger version (500 px or more, transparent background) and keep the same name.
+- **`public/logo.png`**: black lettering in a gold frame, for the light theme.
+- **`public/logo-gold.png`**: all gold, for the dark theme.
+
+The app icons (`src/app/icon.png`, `src/app/apple-icon.png`) are the gold logo on black. Where the logo shows, it stands in for the program's name, so the written name is kept for screen readers only.
+
+The design takes its cue from the logo: gold on black, with a royal feel. The light theme is black ink and gold on ivory, like the logo printed on paper; the dark theme is gold on black, like a foil-stamped cover. Type is classical serif (Cormorant Garamond, with Source Serif for reading and Frank Ruhl Libre for Hebrew) with fine ruled lines. Colors are set once at the top of `src/app/globals.css`.
 
 ---
 
@@ -96,6 +101,13 @@ The service account key gives full access to the database: keep it secret. Only 
 - **Forgot the PIN?** Staff open his page in the overview and tap **Reset tablet PIN**. Next time at the tablet he chooses a new one.
 - Five wrong PINs lock that name for 5 minutes.
 
+**What it shows between bachurim**
+
+- After a minute with nobody at it, the tablet shows the gold logo on black with the parsha and how many bachurim have marked this week (a count only, no names). A tap goes back to the names.
+- With more than 12 names there are letter buttons and a search box over the list.
+- Meeting a goal sets off a small burst of gold, and **Done** shows a short "Well done" with that week's goals met while it saves and signs out.
+- All the motion is CSS and stops if the tablet is set to reduce motion (Android: Settings → Accessibility → **Remove animations**; iPad: Settings → Accessibility → Motion → **Reduce Motion**).
+
 The tablet keeps no sign-in or data on the device after Done. It can show any bachur's week only after his PIN is checked, and then the same security rules apply as on his phone.
 
 **Managed tablets (optional):** the `kiosk-bundle/` folder packages the tablet for a managed kiosk app (lockdown and remote management), run from Staff → Tablets. The bundle shows this site's `/kiosk` page, so the tablets always match the web app. See [`kiosk-bundle/README.md`](kiosk-bundle/README.md).
@@ -159,7 +171,7 @@ npm run typecheck
 | `src/lib/db.ts` | Reading and writing Firestore |
 | `firestore.rules` | Who may read and write what |
 | `src/app/kiosk/`, `src/components/kiosk/` | The wall tablet |
-| `src/app/api/kiosk/` | Server checks for the tablet: names, PINs (hashed, with lockout), joining |
+| `src/app/api/kiosk/` | Server checks for the tablet: names, PINs (hashed, with lockout), joining, and the weekly count on the idle screen |
 | `src/i18n/` | Interface text in English and Hebrew; the chosen language is kept in a cookie |
 | `src/app/` | Screens: `login`, `sign-up`, `progress`, `staff`, `staff/bachur/[id]` |
 

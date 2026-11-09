@@ -1,34 +1,35 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Shabbos Program · Yeshiva Toras Chaim
-   Look and feel taken from the yeshiva's logo: one warm taupe on paper,
-   classical serif capitals, fine ruled lines. Think printed program or
-   ledger, not app.
+   ורוממתנו · Striving to New Heights · Yeshiva Toras Chaim
+   Look and feel taken from the program's logo: gold on black, black-letter
+   Hebrew, classical serif capitals, fine ruled lines. Think bound sefer or
+   printed program, not app. Light theme is ink and gold on ivory, like the
+   logo on paper; dark theme is gold on black, like the foil-stamped cover.
    ───────────────────────────────────────────────────────────────────────── */
 
 :root {
   color-scheme: light;
-  --paper: #f5f0e7;
-  --sheet: #fbf8f2;
-  --ink: #2e2622;
-  --ink-soft: #5c5049;
-  --faint: #9a8f86;
-  --rule: #ddd3c5;
-  --rule-strong: #c4b5a3;
+  --paper: #f4efe4;
+  --sheet: #faf7f0;
+  --ink: #16130f;
+  --ink-soft: #4f473d;
+  --faint: #8d8476;
+  --rule: #e0d6c2;
+  --rule-strong: #c2ac7e;
 
-  --brand: #9c8679;          /* the logo's color */
-  --brand-deep: #6b574b;     /* filled boxes, links, buttons */
-  --brand-wash: #ece3d7;
-  --on-brand: #fbf8f2;
+  --brand: #7f611f;          /* gold, deep enough to read on ivory */
+  --brand-deep: #16130f;     /* filled boxes, links, buttons: black */
+  --brand-wash: #ece3cf;
+  --on-brand: #e2c47c;       /* gold on the black buttons */
 
   --met: #4f6b3e;
-  --progress: #9a6a1f;
+  --progress: #9a5f1a;
   --notmet: #9b4635;
 
   --trend-all: #6f8a4f;
   --trend-some: #c9a04f;
-  --trend-none: #ddd3c5;
+  --trend-none: #e0d6c2;
 
-  --focus: #6b574b;
+  --focus: #7f611f;
   --tap: 44px;
   --gutter: 18px;
   --measure: 680px;
@@ -37,47 +38,47 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper: #1b1714;
-    --sheet: #221d19;
-    --ink: #eee6da;
-    --ink-soft: #c3b6a8;
-    --faint: #8a7e74;
-    --rule: #3a322c;
-    --rule-strong: #54483f;
-    --brand: #b29d8f;
-    --brand-deep: #b29d8f;
-    --brand-wash: #2e2621;
-    --on-brand: #1b1714;
+    --paper: #0c0b09;
+    --sheet: #15130f;
+    --ink: #f0e8d6;
+    --ink-soft: #c4b89e;
+    --faint: #8a7f69;
+    --rule: #2a251c;
+    --rule-strong: #4d4128;
+    --brand: #d4b062;
+    --brand-deep: #d4b062;
+    --brand-wash: #221c11;
+    --on-brand: #0c0b09;
     --met: #a9c48f;
-    --progress: #e0b768;
+    --progress: #e8a25a;
     --notmet: #e39a86;
     --trend-all: #7f9c5d;
-    --trend-some: #c9a04f;
-    --trend-none: #3a322c;
-    --focus: #d4c2b4;
+    --trend-some: #b8913f;
+    --trend-none: #2a251c;
+    --focus: #e6cc8a;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #1b1714;
-  --sheet: #221d19;
-  --ink: #eee6da;
-  --ink-soft: #c3b6a8;
-  --faint: #8a7e74;
-  --rule: #3a322c;
-  --rule-strong: #54483f;
-  --brand: #b29d8f;
-  --brand-deep: #b29d8f;
-  --brand-wash: #2e2621;
-  --on-brand: #1b1714;
+  --paper: #0c0b09;
+  --sheet: #15130f;
+  --ink: #f0e8d6;
+  --ink-soft: #c4b89e;
+  --faint: #8a7f69;
+  --rule: #2a251c;
+  --rule-strong: #4d4128;
+  --brand: #d4b062;
+  --brand-deep: #d4b062;
+  --brand-wash: #221c11;
+  --on-brand: #0c0b09;
   --met: #a9c48f;
-  --progress: #e0b768;
+  --progress: #e8a25a;
   --notmet: #e39a86;
   --trend-all: #7f9c5d;
-  --trend-some: #c9a04f;
-  --trend-none: #3a322c;
-  --focus: #d4c2b4;
+  --trend-some: #b8913f;
+  --trend-none: #2a251c;
+  --focus: #e6cc8a;
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
@@ -170,7 +171,7 @@ button:disabled {
   white-space: nowrap;
 }
 
-/* Spaced capitals, as in "YESHIVA TORAS CHAIM" on the logo. */
+/* Spaced capitals, as in "STRIVING TO NEW HEIGHTS" on the logo. */
 .caps,
 .eyebrow,
 .pillar__title,
@@ -262,7 +263,7 @@ button:disabled {
 }
 
 .brand__mark.logo-img {
-  width: 44px;
+  width: 92px;
   height: auto;
 }
 
@@ -277,6 +278,16 @@ button:disabled {
   font-family: var(--font-display), Georgia, serif;
   font-weight: 600;
   font-size: 1.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand__tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.0625rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -595,9 +606,10 @@ button:disabled {
 }
 
 .auth__mark.logo-img {
-  width: 132px;
+  width: 300px;
+  max-width: 100%;
   height: auto;
-  margin-bottom: 4px;
+  margin: 2px 0 6px;
 }
 
 .auth__head .muted {
@@ -1500,8 +1512,13 @@ details.req__about p {
 }
 
 @media (max-width: 420px) {
-  .brand__yeshiva {
+  .brand__yeshiva,
+  .brand__tagline {
     display: none;
+  }
+
+  .brand__mark.logo-img {
+    width: 80px;
   }
 
   .brand__name {
@@ -1515,20 +1532,41 @@ details.req__about p {
   }
 }
 
-/* The logo is drawn in one colour on a transparent background; in dark mode
-   it sits on a paper-coloured disc, like a seal. */
+/* The logo comes in two inks: black and gold for the light theme, all gold
+   for the dark theme. Logo.tsx renders both; only one shows. */
+:root .logo-img--dark {
+  display: none;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-img {
-    background: #f5f0e7;
-    border-radius: 50%;
-    padding: 3px;
+  :root:not([data-theme="light"]) .logo-img--light {
+    display: none;
+  }
+
+  :root:not([data-theme="light"]) .logo-img--dark {
+    display: block;
   }
 }
 
-:root[data-theme="dark"] .logo-img {
-  background: #f5f0e7;
-  border-radius: 50%;
-  padding: 3px;
+:root[data-theme="dark"] .logo-img--light {
+  display: none;
+}
+
+:root[data-theme="dark"] .logo-img--dark {
+  display: block;
+}
+
+/* Where the logo shows, it is the program's name, so the written name is
+   kept for screen readers only. Without a logo file, the name shows. */
+.logo-img ~ .brand__text .brand__name,
+.logo-img ~ .auth__name,
+.logo-img ~ .kiosk__titles .kiosk__program {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 @media (min-width: 721px) {
@@ -1578,12 +1616,12 @@ details.req__about p {
 }
 
 .kiosk__logo.logo-img {
-  width: 104px;
+  width: 230px;
   height: auto;
 }
 
 .kiosk__logo--small.logo-img {
-  width: 56px;
+  width: 116px;
 }
 
 .kiosk__titles {
@@ -1596,6 +1634,14 @@ details.req__about p {
 
 .kiosk__titles h1 {
   font-size: 3rem;
+}
+
+.kiosk__tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 1.1;
 }
 
 .kiosk__week {
@@ -1880,8 +1926,12 @@ details.req__about p {
     font-size: 2rem;
   }
 
+  .kiosk__tagline {
+    font-size: 1.5rem;
+  }
+
   .kiosk__logo.logo-img {
-    width: 72px;
+    width: 150px;
   }
 
   .kiosk__sessionbar {
@@ -1899,4 +1949,706 @@ details.req__about p {
   min-height: 52px;
   padding: 0 18px;
   font-size: 1.125rem;
+}
+
+/* ── Wall tablet: motion ──────────────────────────────────────────────────
+   Every animation moves transform or opacity only (cheap on a tablet), and
+   all of it sits inside prefers-reduced-motion: no-preference, so a tablet
+   set to reduce motion gets the same screens, still. */
+
+/* Specks of gold light that drift upward ("Striving to New Heights"). */
+.motes {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.motes i {
+  position: absolute;
+  bottom: -12px;
+  left: var(--x);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: var(--mote, var(--brand));
+  box-shadow: 0 0 calc(var(--s) * 2.5) var(--mote, var(--brand));
+  opacity: 0;
+}
+
+/* A burst of small gold diamonds, fanned upward from the middle. */
+.sparks {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.sparks i {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--brand);
+  opacity: 0;
+  transform: rotate(var(--a)) translateX(0) rotate(45deg);
+}
+
+.sparks--big i {
+  width: 10px;
+  height: 10px;
+}
+
+/* A thin ring that fills. */
+.ring {
+  position: relative;
+  flex: none;
+}
+
+.ring svg {
+  display: block;
+}
+
+.ring circle {
+  fill: none;
+}
+
+.ring__track {
+  stroke: var(--rule-strong);
+}
+
+.ring__fill {
+  stroke: var(--brand);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+.ring__inner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* The yeshiva-wide count on the names screen. */
+.kiosk__pulse {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--ink-soft);
+}
+
+.kiosk__pulsebar {
+  display: block;
+  height: 3px;
+  background: var(--rule);
+  overflow: hidden;
+}
+
+.kiosk__pulsebar i {
+  display: block;
+  height: 100%;
+  width: var(--p);
+  background: var(--brand);
+  transition: width 1.4s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+/* Letter buttons over the names. */
+.kiosk__letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.kiosk__letter {
+  min-width: 56px;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--rule-strong);
+  background: var(--sheet);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+.kiosk__letter[aria-pressed="true"] {
+  background: var(--brand-deep);
+  border-color: var(--brand-deep);
+  color: var(--on-brand);
+}
+
+[dir="rtl"] .kiosk__letter {
+  font-family: var(--font-he), Georgia, serif;
+}
+
+/* Press feedback: everything you tap gives a little. */
+.kiosk__name,
+.kiosk__letter,
+.pinpad__keys button,
+.kiosk .btn,
+.kiosk .tap {
+  transition:
+    transform 0.12s ease-out,
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    box-shadow 0.2s;
+}
+
+.kiosk__name:active,
+.kiosk__letter:active,
+.pinpad__keys button:active:not(:disabled),
+.kiosk .btn:active:not(:disabled),
+.kiosk .tap:active {
+  transform: scale(0.96);
+}
+
+.kiosk__name:active,
+.pinpad__keys button:active:not(:disabled) {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 30%, transparent);
+}
+
+.kiosk .summary__count {
+  position: relative;
+}
+
+.kiosk .summary--all {
+  box-shadow:
+    0 0 0 1px var(--brand),
+    0 0 28px -8px var(--brand);
+}
+
+.kiosk .segments i {
+  transition:
+    background-color 0.4s,
+    border-color 0.4s;
+}
+
+/* After Done. */
+.farewell {
+  position: relative;
+  text-align: center;
+}
+
+.farewell__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.farewell__ring {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.farewell__count {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 4rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--brand-deep);
+}
+
+.farewell__count small {
+  font-size: 1.75rem;
+  color: var(--faint);
+}
+
+.farewell__title {
+  font-size: 3.25rem;
+}
+
+.farewell__line {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-size: 1.625rem;
+  color: var(--ink-soft);
+}
+
+.farewell--all .farewell__line {
+  color: var(--brand);
+}
+
+.farewell--all .ring__fill {
+  filter: drop-shadow(0 0 6px var(--brand));
+}
+
+.farewell__status {
+  color: var(--faint);
+  font-size: 1.0625rem;
+}
+
+[dir="rtl"] .farewell__title,
+[dir="rtl"] .farewell__line {
+  font-family: var(--font-he), Georgia, serif;
+}
+
+/* The idle screen: always gold on black. */
+.attract {
+  --mote: #e2c47c;
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px;
+  border: 0;
+  background: radial-gradient(ellipse at 50% 38%, #1d1810 0%, #0c0b09 62%);
+  color: #f0e8d6;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.attract > :not(.motes) {
+  position: relative;
+  z-index: 1;
+}
+
+.attract__glow {
+  position: absolute !important;
+  z-index: 0 !important;
+  left: 50%;
+  top: 34%;
+  width: 70vmin;
+  height: 70vmin;
+  margin: -35vmin 0 0 -35vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 176, 98, 0.18) 0%, transparent 65%);
+}
+
+.attract__logo {
+  display: block;
+  width: min(600px, 72vw);
+}
+
+.attract__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A band of light that crosses the gold, clipped to the logo's own shape. */
+.attract__shine {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--logo) center / contain no-repeat;
+  mask: var(--logo) center / contain no-repeat;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 244, 214, 0.85) 50%,
+    transparent 62%
+  );
+  background-size: 300% 100%;
+  background-position: 120% 0;
+}
+
+.attract__tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-size: 2.5rem;
+  color: #e2c47c;
+}
+
+.attract__week {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: #c4b89e;
+  font-style: italic;
+  font-size: 1.25rem;
+}
+
+.attract__week strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: normal;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #f0e8d6;
+}
+
+[dir="rtl"] .attract__week strong {
+  font-family: var(--font-he), Georgia, serif;
+}
+
+.attract__pulse {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 10px;
+}
+
+.attract .ring__track {
+  stroke: rgba(226, 196, 124, 0.16);
+}
+
+.attract .ring__fill {
+  stroke: #e2c47c;
+  filter: drop-shadow(0 0 5px rgba(226, 196, 124, 0.6));
+}
+
+.attract__count {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #f0e8d6;
+}
+
+.attract__pulseline {
+  max-width: 280px;
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: #e2c47c;
+  text-align: start;
+}
+
+.attract__cta {
+  margin-top: 18px;
+  font-size: 1rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #c4b89e;
+}
+
+@media (max-width: 700px) {
+  .attract__tagline {
+    font-size: 1.75rem;
+  }
+
+  .attract__pulse {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .attract__pulseline {
+    text-align: center;
+  }
+
+  .farewell__title {
+    font-size: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motes,
+  .sparks,
+  .attract__shine {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Each screen rises in. */
+  .kiosk--in > :not(.attract):not(.motes) {
+    animation: k-rise 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+
+  .kiosk--in > :nth-child(2) {
+    animation-delay: 50ms;
+  }
+
+  .kiosk--in > :nth-child(3) {
+    animation-delay: 100ms;
+  }
+
+  .kiosk--in > :nth-child(n + 4) {
+    animation-delay: 150ms;
+  }
+
+  .kiosk--in .kiosk__head .kiosk__logo {
+    animation: k-fade 0.9s ease-out backwards 0.1s;
+  }
+
+  .pinpad {
+    animation: k-rise 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+
+  /* Names arrive one after another. */
+  .kiosk__name {
+    animation: k-name 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 22ms);
+  }
+
+  .kiosk__pulsebar i {
+    animation: k-grow 1.6s cubic-bezier(0.22, 0.7, 0.2, 1) backwards 0.2s;
+  }
+
+  /* PIN: dots pop as they fill, wave while checking, shake when wrong. */
+  .pinpad__dots i.on {
+    animation: k-pop 0.28s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .pinpad--busy .pinpad__dots i {
+    animation: k-wave 0.9s ease-in-out infinite;
+  }
+
+  .pinpad--busy .pinpad__dots i:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .pinpad--busy .pinpad__dots i:nth-child(3) {
+    animation-delay: 0.24s;
+  }
+
+  .pinpad--busy .pinpad__dots i:nth-child(4) {
+    animation-delay: 0.36s;
+  }
+
+  .pinpad--error .pinpad__dots {
+    animation: k-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  /* The week board: cards rise in, goals light up. */
+  .kiosk__board .req {
+    animation: k-rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+
+  .kiosk__board .pillar:nth-of-type(2) .req {
+    animation-delay: 60ms;
+  }
+
+  .kiosk__board .pillar:nth-of-type(n + 3) .req {
+    animation-delay: 120ms;
+  }
+
+  .kiosk .segments i.on {
+    animation: k-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) backwards;
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+
+  .kiosk .badge--met {
+    animation: k-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+
+  .kiosk .summary--up .summary__count {
+    animation: k-lift 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .sparks i {
+    animation: k-spark 1s cubic-bezier(0.15, 0.6, 0.3, 1) forwards var(--w);
+  }
+
+  .sparks--big i {
+    animation-duration: 1.4s;
+  }
+
+  .motes i {
+    animation: k-ascend var(--t) linear var(--d) infinite;
+  }
+
+  .kiosk__overlay {
+    animation: k-fade 0.25s ease-out;
+  }
+
+  .kiosk__overlay .card {
+    animation: k-rise 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  /* Idle screen. */
+  .attract {
+    animation: k-fade 0.9s ease-out;
+  }
+
+  .attract__logo {
+    animation: k-reveal 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards 0.15s;
+  }
+
+  .attract__shine {
+    animation: k-shine 7s ease-in-out infinite 1.8s;
+  }
+
+  .attract__glow {
+    animation: k-breathe 6s ease-in-out infinite;
+  }
+
+  .attract__tagline,
+  .attract__week {
+    animation: k-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards 0.7s;
+  }
+
+  .attract__pulse {
+    animation: k-rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards 1s;
+  }
+
+  .attract__cta {
+    animation: k-cta 3.2s ease-in-out infinite 1.6s;
+  }
+
+  .farewell__title {
+    animation: k-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards 0.35s;
+  }
+
+  .farewell__line {
+    animation: k-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) backwards 0.6s;
+  }
+
+  .farewell__ring {
+    animation: k-reveal 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  }
+}
+
+@keyframes k-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes k-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes k-name {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+@keyframes k-grow {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes k-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes k-wave {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes k-shake {
+  15%,
+  85% {
+    transform: translateX(-3px);
+  }
+  30%,
+  70% {
+    transform: translateX(6px);
+  }
+  45%,
+  55% {
+    transform: translateX(-9px);
+  }
+  50% {
+    transform: translateX(9px);
+  }
+}
+
+@keyframes k-lift {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-6px) scale(1.12);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes k-spark {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateX(0) rotate(45deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateX(var(--r)) rotate(45deg) scale(0.3);
+  }
+}
+
+@keyframes k-ascend {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+  }
+  12% {
+    opacity: var(--o);
+  }
+  80% {
+    opacity: calc(var(--o) * 0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(18px, -105vh, 0);
+  }
+}
+
+@keyframes k-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    filter: blur(4px);
+  }
+}
+
+@keyframes k-shine {
+  0%,
+  35% {
+    background-position: 120% 0;
+  }
+  65%,
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes k-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes k-cta {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
 }

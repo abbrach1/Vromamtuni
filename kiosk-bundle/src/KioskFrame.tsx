@@ -4,7 +4,7 @@ import { noteInteraction } from "./runtime";
 import { Status } from "./Status";
 
 /**
- * The tablet's screen: the Shabbos Program's own /kiosk page, full screen.
+ * The tablet's screen: the program's own /kiosk page, full screen.
  *
  * The talmidim see exactly the web app's tablet screens (tap your name, PIN,
  * the week, commitments, joining), in English or Hebrew. The fleet runtime
@@ -63,7 +63,7 @@ export function KioskFrame() {
       <iframe
         key={attempt}
         src={KIOSK_URL}
-        title="Shabbos Program"
+        title="Vromamtanu"
         style={{
           position: "fixed",
           inset: 0,
@@ -71,11 +71,11 @@ export function KioskFrame() {
           height: "100%",
           border: 0,
           visibility: state === "offline" ? "hidden" : "visible",
-          background: "#f5f0e7",
+          background: "#0c0b09",
         }}
         allow="fullscreen"
       />
-      {state === "offline" && <Status note="Can't reach the Shabbos Program site. Retrying…" />}
+      {state === "offline" && <Status note="Can't reach the program site. Retrying…" />}
     </>
   );
 }

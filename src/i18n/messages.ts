@@ -234,6 +234,12 @@ const en = {
   kioskOff: "The wall tablet isn't turned on yet. See “Wall tablet” in README.md.",
   kioskNoNames: "No one has joined yet. Tap “New here?” to start.",
   kioskEditCommitments: "My commitments",
+  kioskPulse: (n: number, total: number) => `${n} of ${total} have marked this week`,
+  kioskTapToBegin: "Tap anywhere to begin",
+  kioskWellDone: (name: string) => `Well done, ${name}`,
+  kioskAllMet: "Every goal met this week",
+  kioskAllLetters: "All",
+  kioskSaved: "Saved",
 
   // Tablet PIN (in the app) and staff reset
   tabletPin: "PIN for the wall tablet",
@@ -467,6 +473,12 @@ const he: Messages = {
   kioskOff: "הטאבלט עדיין לא הופעל. ראו \"Wall tablet\" בקובץ README.md.",
   kioskNoNames: "עדיין אף אחד לא הצטרף. הקש \"חדש כאן?\" כדי להתחיל.",
   kioskEditCommitments: "הקבלות שלי",
+  kioskPulse: (n, total) => `${n} מתוך ${total} כבר סימנו השבוע`,
+  kioskTapToBegin: "גע במסך כדי להתחיל",
+  kioskWellDone: (name) => `יישר כח, ${name}`,
+  kioskAllMet: "כל היעדים הושגו השבוע",
+  kioskAllLetters: "הכל",
+  kioskSaved: "נשמר",
 
   tabletPin: "קוד לטאבלט שבקיר",
   tabletPinHelp: "4 ספרות, לכניסה בטאבלט שבבית המדרש.",

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { pillars, type Requirement } from "@/config/program";
 import { addWeeks, dayIndex, type ISODate } from "@/lib/dates";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/lib/rules";
 import { useLang } from "@/i18n/client";
 import { CheckIcon } from "@/components/icons";
+import { Sparks } from "@/components/kiosk/motion";
 import { DayRow, FormFields, TapGrid, type WeekContext } from "./inputs";
 import { useAutosave, type SaveStatus } from "./useAutosave";
 
@@ -27,6 +28,10 @@ interface Props {
   readOnly?: boolean;
   /** Where "last week" links point, e.g. "/progress". */
   basePath: string;
+  /** Wall tablet: a burst of gold when a goal is newly met. */
+  celebrate?: boolean;
+  /** Told the week's goals met / total whenever they change. */
+  onSummary?: (met: number, total: number) => void;
 }
 
 export function ProgressBoard(props: Props) {
@@ -39,6 +44,17 @@ export function ProgressBoard(props: Props) {
     () => summarizeWeek(selectedIds, progress, week, currentWeek, lang),
     [selectedIds, progress, week, currentWeek, lang],
   );
+
+  // A goal newly met (not on first load): bump `burst` so the sparks replay.
+  const [burst, setBurst] = useState(0);
+  const lastMet = useRef(summary.met);
+  useEffect(() => {
+    if (props.celebrate && !readOnly && summary.met > lastMet.current) setBurst((b) => b + 1);
+    lastMet.current = summary.met;
+  }, [summary.met, props.celebrate, readOnly]);
+
+  const { onSummary } = props;
+  useEffect(() => onSummary?.(summary.met, summary.total), [onSummary, summary.met, summary.total]);
 
   const ctx: WeekContext = { week, today, readOnly };
   const isCurrent = week === currentWeek;
@@ -80,16 +96,26 @@ export function ProgressBoard(props: Props) {
 
   return (
     <div className={`stack${readOnly ? " readonly" : ""}`}>
-      <section className="card summary" aria-live="polite">
-        <div className="summary__count">
+      <section
+        className={`card summary${burst ? " summary--up" : ""}${
+          summary.total > 0 && summary.met === summary.total ? " summary--all" : ""
+        }`}
+        aria-live="polite"
+      >
+        <div className="summary__count" key={burst}>
           {summary.met}
           <span> / {summary.total}</span>
+          {burst > 0 && <Sparks big={summary.met === summary.total} />}
         </div>
         <div className="summary__text">
           <strong>{m.goalsMet(summary.met, summary.total, isCurrent)}</strong>
           <div className="segments" aria-hidden>
             {Array.from({ length: summary.total }, (_, i) => (
-              <i key={i} className={i < summary.met ? "on" : undefined} />
+              <i
+                key={i}
+                className={i < summary.met ? "on" : undefined}
+                style={{ "--i": i } as React.CSSProperties}
+              />
             ))}
           </div>
           {!readOnly && <SaveIndicator status={status} />}

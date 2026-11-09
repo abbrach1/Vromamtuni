@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const name = program.name[lang];
   return {
     title: { default: name, template: `%s · ${name}` },
-    description: `${program.yeshivaName[lang]} · ${name}`,
+    description: `${program.yeshivaName[lang]} · ${name} · ${program.tagline[lang]}`,
     appleWebApp: { capable: true, title: name, statusBarStyle: "default" },
   };
 }
@@ -44,8 +44,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f0e7" },
-    { media: "(prefers-color-scheme: dark)", color: "#1b1714" },
+    { media: "(prefers-color-scheme: light)", color: "#f4efe4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0b09" },
   ],
 };
 
