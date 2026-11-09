@@ -11,13 +11,27 @@
  *                  KIOSK_DATA_ORIGIN repository variable.
  *
  * Both are build-time env (VITE_*), so publishing a bundle bakes them in.
+ *
+ * When the bundle is served from the site itself (the Vercel "kiosk-bundle"
+ * service at /kiosk-shell/, a browser preview of the tablet), DATA_ORIGIN
+ * falls back to that same site, so previews and preview deployments work with
+ * nothing to set. On a tablet the bundle runs from the shell's own
+ * https://localhost origin, so there the build-time value is required.
  */
 export const OUR_ORIGIN: string =
   (import.meta.env.VITE_OUR_ORIGIN as string | undefined)?.replace(/\/$/, "") ||
   "https://tcpdca.com";
 
+function sameSiteOrigin(): string {
+  if (typeof window === "undefined") return "";
+  const { protocol, hostname, origin } = window.location;
+  if (protocol !== "https:" && protocol !== "http:") return "";
+  // localhost is the tablet shell (or local Vite dev): no site to fall back to.
+  return hostname === "localhost" || hostname === "127.0.0.1" ? "" : origin;
+}
+
 export const DATA_ORIGIN: string =
-  (import.meta.env.VITE_DATA_ORIGIN as string | undefined)?.replace(/\/$/, "") || "";
+  (import.meta.env.VITE_DATA_ORIGIN as string | undefined)?.replace(/\/$/, "") || sameSiteOrigin();
 
 /** How often the tablet calls our fleet home. */
 export const CHECKIN_INTERVAL_MS = 60_000;

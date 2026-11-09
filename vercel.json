@@ -1,0 +1,27 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": ".",
+      "framework": "nextjs"
+    },
+    "kiosk-bundle": {
+      "root": "kiosk-bundle",
+      "framework": "vite",
+      "buildCommand": "npm run build:vercel"
+    }
+  },
+  "redirects": [
+    { "source": "/kiosk-shell", "destination": "/kiosk-shell/", "permanent": false }
+  ],
+  "rewrites": [
+    {
+      "source": "/kiosk-shell/(.*)",
+      "destination": { "service": "kiosk-bundle" }
+    },
+    {
+      "source": "/(.*)",
+      "destination": { "service": "app" }
+    }
+  ]
+}
