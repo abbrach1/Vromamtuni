@@ -1,0 +1,23 @@
+{
+  "name": "shabbos-kiosk-bundle",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "description": "The Capacitor OTA bundle for the Shabbos-Program wall tablets: runs inside the PDCA kiosk native shell, reuses this repo's kiosk UI, and is published on its own GitHub-hosted OTA channel. See README.md and the partner contract in the PDCA repo.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}

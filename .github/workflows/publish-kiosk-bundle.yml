@@ -1,0 +1,94 @@
+# Publish the Shabbos-Program kiosk OTA bundle.
+#
+# This is the partner's "push an update" button. It builds the bundle, zips it,
+# publishes it as a GitHub Release asset (a stable public HTTPS URL the PDCA
+# kiosk shell downloads), and updates the manifest the tablets poll. No access
+# to the PDCA release pipeline is needed — the tablets are pointed at this repo's
+# manifest via their per-device `ota_manifest_url`.
+#
+# Trigger it by pushing a tag `kiosk-v<version>` (e.g. `kiosk-v0.1.0`), or from
+# the Actions tab (Run workflow) with a version.
+#
+# The manifest is written to `public/kiosk-manifest.json`, so this app serves it
+# at `https://<your-domain>/kiosk-manifest.json` (that is the URL to set as the
+# tablets' `ota_manifest_url`). The bundle zip itself is hosted by GitHub.
+name: Publish kiosk bundle
+
+on:
+  push:
+    tags: ["kiosk-v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Bundle version, e.g. 0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: v
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            V="${GITHUB_REF_NAME#kiosk-v}"
+          else
+            V="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "tag=kiosk-v$V" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build the bundle
+        working-directory: kiosk-bundle
+        run: |
+          npm ci
+          npm run build
+
+      - name: Zip (index.html + assets at the zip root)
+        id: zip
+        working-directory: kiosk-bundle/dist
+        run: |
+          Z="shabbos-kiosk-${{ steps.v.outputs.version }}.zip"
+          zip -r "../$Z" .
+          cd ..
+          SUM=$(sha256sum "$Z" | awk '{print $1}')
+          echo "zip=$Z" >> "$GITHUB_OUTPUT"
+          echo "checksum=$SUM" >> "$GITHUB_OUTPUT"
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.v.outputs.tag }}" \
+            "kiosk-bundle/${{ steps.zip.outputs.zip }}" \
+            --title "Kiosk bundle ${{ steps.v.outputs.version }}" \
+            --notes "Shabbos-Program kiosk OTA bundle ${{ steps.v.outputs.version }}."
+
+      - name: Update the manifest the tablets poll
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          URL=$(gh release view "${{ steps.v.outputs.tag }}" \
+            --json assets --jq '.assets[] | select(.name|endswith(".zip")) | .url')
+          mkdir -p public
+          cat > public/kiosk-manifest.json <<EOF
+          {
+            "version": "${{ steps.v.outputs.version }}",
+            "url": "$URL",
+            "checksum": "${{ steps.zip.outputs.checksum }}"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/kiosk-manifest.json
+          git commit -m "kiosk: publish bundle ${{ steps.v.outputs.version }}"
+          git push
