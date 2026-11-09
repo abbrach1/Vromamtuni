@@ -74,6 +74,11 @@ if (typeof window !== "undefined") {
 }
 const idle = () => Date.now() - lastInteractionAt >= OTA_IDLE_BEFORE_APPLY_MS;
 
+/** Touches inside the embedded /kiosk page arrive as messages; count them too. */
+export function noteInteraction(): void {
+  lastInteractionAt = Date.now();
+}
+
 async function loadIdentity(): Promise<void> {
   const d = kioskDevice();
   if (!d) return;

@@ -76,6 +76,29 @@ function useIdle(active: boolean, limitMs: number, onIdle: () => void) {
   }, [active, limitMs, onIdle]);
 }
 
+/**
+ * When /kiosk is shown inside the wall tablet's kiosk shell (see kiosk-bundle/),
+ * tell the shell that the page is up and when someone touches it, so the shell
+ * never swaps in an update while a bachur is using it.
+ */
+function useShellBridge() {
+  useEffect(() => {
+    if (window.parent === window) return;
+    const post = (type: string) => window.parent.postMessage({ source: "shabbos-kiosk", type }, "*");
+    post("ready");
+    let last = 0;
+    const onTouch = () => {
+      const now = Date.now();
+      if (now - last < 1000) return;
+      last = now;
+      post("activity");
+    };
+    const events = ["pointerdown", "keydown", "touchstart"] as const;
+    events.forEach((e) => window.addEventListener(e, onTouch, { passive: true }));
+    return () => events.forEach((e) => window.removeEventListener(e, onTouch));
+  }, []);
+}
+
 export function KioskApp({
   week,
   currentWeek,
@@ -93,6 +116,7 @@ export function KioskApp({
 }) {
   const { m, t } = useLang();
   const router = useRouter();
+  useShellBridge();
   const [screen, setScreen] = useState<Screen>({ s: "loading" });
   const [people, setPeople] = useState<Person[]>([]);
   const [busy, setBusy] = useState(false);

@@ -52,9 +52,18 @@ jobs:
         with:
           node-version: "20"
 
+      # The tablet shows the site's /kiosk page. Set the site's address once
+      # under Settings → Secrets and variables → Actions → Variables:
+      # KIOSK_DATA_ORIGIN = https://your-domain (no trailing slash).
       - name: Build the bundle
         working-directory: kiosk-bundle
+        env:
+          VITE_DATA_ORIGIN: ${{ vars.KIOSK_DATA_ORIGIN }}
         run: |
+          if [ -z "$VITE_DATA_ORIGIN" ]; then
+            echo "::error::Set the KIOSK_DATA_ORIGIN repository variable to the site's address (e.g. https://shabbos.example.org)."
+            exit 1
+          fi
           npm ci
           npm run build
 

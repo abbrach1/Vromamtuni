@@ -98,6 +98,8 @@ The service account key gives full access to the database: keep it secret. Only 
 
 The tablet keeps no sign-in or data on the device after Done. It can show any bachur's week only after his PIN is checked, and then the same security rules apply as on his phone.
 
+**Managed tablets (optional):** the `kiosk-bundle/` folder packages the tablet for a managed kiosk app (lockdown and remote management), run from Staff → Tablets. The bundle shows this site's `/kiosk` page, so the tablets always match the web app. See [`kiosk-bundle/README.md`](kiosk-bundle/README.md).
+
 ### 5. Optional: password-reset email in Hebrew
 
 **Authentication → Templates → Password reset → Edit (pencil) → Template language.** The app already asks Firebase to send in the language the bachur is using.

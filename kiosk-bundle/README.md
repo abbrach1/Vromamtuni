@@ -5,57 +5,60 @@ The wall-tablet kiosk, packaged to run inside the **PDCA kiosk native shell**
 This folder builds the **OTA bundle** the shell downloads and runs — the tablet
 *is* this bundle, served locally; it is not a web page in a browser.
 
-The rest of this repo is unchanged: the phone app and staff overview stay on
-Vercel + Firebase. This bundle reuses this repo's kiosk UI and talks to the same
-`/api/kiosk/*` routes and Firebase.
+**What the tablet shows:** the Shabbos Program's own `/kiosk` page, full
+screen: the same screens the talmidim use on the web (tap your name, PIN,
+the week, commitments, joining), in English or Hebrew. It's one copy of the
+code, so the tablet and the web app can never drift apart, and every Vercel
+deploy reaches the tablets straight away, with no new bundle needed.
 
 ## How it fits together
 
-- **Native shell (theirs, PDCA):** lockdown, enrollment, check-in, remote
-  commands, the OTA client. Provides the `KioskDevice` plugin + check-in
-  protocol. See the contract in the PDCA repo:
-  `apps/kiosk-tablet/docs/partner-bundle-contract.md`.
-- **This bundle:** `src/runtime.ts` is the fleet plumbing (identity → check-in
-  to the PDCA origin → the device's own OTA channel → confirm-or-rollback). The
-  UI sits on top of it.
-- **Your backend:** this app's `/api/kiosk/*` on Vercel + Firestore. The bundle
-  calls it over the network, so those routes need CORS for the shell origin and
-  a device token (added in a follow-up PR).
+- **Native shell (PDCA):** lockdown, enrollment, remote commands, the OTA
+  client. Provides the `KioskDevice` plugin and the check-in protocol.
+- **This bundle:** `src/runtime.ts` is the fleet plumbing (identity, check-in
+  to the PDCA origin, the device's own OTA channel, confirm-or-rollback).
+  `src/KioskFrame.tsx` shows `<site>/kiosk` full screen around it. If the site
+  can't be reached, it shows the device status and keeps retrying.
+- **The site (Vercel + Firebase):** `/kiosk` and `/api/kiosk/*` are unchanged.
+  Because the page runs on the site's own origin, the PIN routes need no CORS
+  and no device token; the tablet code and PIN checks stay exactly as they are.
+- **Touches:** the `/kiosk` page posts `ready` and `activity` messages to the
+  shell, so an OTA swap never reloads the screen while a bachur is using it.
 
-## Config (build-time env)
+## Config
 
-| Var | What | Default |
-|---|---|---|
-| `VITE_OUR_ORIGIN` | PDCA fleet backend (check-in, OTA) | `https://tcpdca.com` |
-| `VITE_DATA_ORIGIN` | **This app's** origin for `/api/kiosk/*` | _(set when the domain is known)_ |
-| `VITE_FIREBASE_*` | Firebase web config (apiKey, authDomain, projectId, appId) | _(set when wiring the UI)_ |
+| Where | What |
+| --- | --- |
+| GitHub repository variable `KIOSK_DATA_ORIGIN` | The site's address, e.g. `https://shabbos.example.org`, no trailing slash. Settings → Secrets and variables → Actions → Variables. The publish workflow bakes it into the bundle (as `VITE_DATA_ORIGIN`). |
+| `VITE_OUR_ORIGIN` (optional) | PDCA fleet backend; defaults to `https://tcpdca.com`. |
+| Vercel `KIOSK_FRAME_ANCESTORS` (optional) | Which app origins may show `/kiosk` in a frame. Defaults to the Capacitor WebView origins `https://localhost http://localhost capacitor://localhost`. Every other page can only be framed by the site itself. Read at build time, so redeploy after changing it. |
 
-`VITE_DATA_ORIGIN` and the Firebase config are the only things that still need
-the production domain / Firebase project; everything else is wired.
+**Native shell note:** the language button stores the choice in a cookie on
+the site. Inside the shell that's a cross-site frame, so the shell's WebView
+must accept third-party cookies (`CookieManager.setAcceptThirdPartyCookies(webView, true)`),
+or the Hebrew/English choice won't stick between page loads.
 
 ## Build
 
 ```bash
 cd kiosk-bundle
 npm ci
-npm run build      # -> dist/ (index.html + assets, relative paths)
+VITE_DATA_ORIGIN=http://localhost:3000 npm run build   # -> dist/
 ```
 
-## Publish (the partner's "push an update")
+To try it on a computer: run the site (`npm run dev` in the repo root, with
+`KIOSK_FRAME_ANCESTORS=http://localhost:5173`), then serve `dist/` on port 5173
+(e.g. `npx vite preview --port 5173`) and open http://localhost:5173.
 
-Handled by `.github/workflows/publish-kiosk-bundle.yml`: push a tag
-`kiosk-v<version>` (e.g. `kiosk-v0.1.0`) or run it from the Actions tab. It
-builds, zips, creates a **GitHub Release** with the zip (a stable public URL),
-and writes `public/kiosk-manifest.json` — served at
-`https://<your-domain>/kiosk-manifest.json`, which is the URL to set as each
-tablet's `ota_manifest_url`. The repo/releases must be **public** (the tablet
-downloads unauthenticated — so no secrets in the bundle).
+## Publish (push an update)
 
-## Status
+Most changes need no new bundle at all: change `/kiosk` in the main app and
+deploy to Vercel as usual; the tablets show it on their next load.
 
-- ✅ Build pipeline + fleet runtime + publish workflow.
-- ⬜ **Next:** replace `src/Status.tsx` with this repo's `<KioskApp/>` (reused,
-  pointed at `/api/kiosk/*` via `VITE_DATA_ORIGIN`), with small shims for the
-  Next-only APIs it uses (`next/navigation`, and the server-computed week/parsha
-  props moved client-side). Needs the Firebase web config + production domain.
-- ⬜ PR to add CORS + a device token to `src/app/api/kiosk/*`.
+A new bundle is only needed when this folder changes (the runtime or the
+frame). Push a tag `kiosk-v<version>` (e.g. `kiosk-v0.2.0`) or run "Publish
+kiosk bundle" from the Actions tab. It builds, zips, creates a GitHub Release
+with the zip, and writes `public/kiosk-manifest.json` on the default branch,
+served at `https://<site>/kiosk-manifest.json` (the URL to set as each
+tablet's `ota_manifest_url`). Releases must be downloadable without signing
+in, so the repo must be public (the bundle holds no secrets).

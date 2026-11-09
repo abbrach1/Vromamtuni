@@ -23,7 +23,10 @@ export function useSwitchLang() {
   const router = useRouter();
   return useCallback(() => {
     const next: Lang = lang === "he" ? "en" : "he";
-    document.cookie = `lang=${next}; path=/; max-age=31536000; samesite=lax`;
+    // SameSite=None so the choice also sticks on the wall tablet, where /kiosk
+    // is shown inside the kiosk shell app (a cross-site frame).
+    const secure = location.protocol === "https:";
+    document.cookie = `lang=${next}; path=/; max-age=31536000; ${secure ? "samesite=none; secure" : "samesite=lax"}`;
     document.documentElement.lang = next;
     document.documentElement.dir = messages[next].dir;
     router.refresh();
