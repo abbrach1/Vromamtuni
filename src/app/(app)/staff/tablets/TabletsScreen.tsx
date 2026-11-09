@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useLang } from "@/i18n/client";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -136,8 +137,13 @@ export function TabletsScreen() {
           </div>
         )}
 
-        <div className="toolbar" style={{ justifyContent: "flex-end" }}>
-          <button type="button" className="btn btn--primary btn--small" onClick={() => setAdding(true)}>
+        <ChannelEditor authed={authed} />
+
+        <div className="toolbar" style={{ justifyContent: "flex-end", gap: 8 }}>
+          <Link href="/staff/tablets/provision" className="btn btn--primary btn--small">
+            {m.provisionTitle}
+          </Link>
+          <button type="button" className="btn btn--small" onClick={() => setAdding(true)}>
             {m.tAddTablet}
           </button>
         </div>
@@ -304,6 +310,54 @@ function AddForm({
         <button type="submit" className="btn btn--primary" disabled={busy}>
           {m.tCreate}
         </button>
+      </div>
+    </form>
+  );
+}
+
+function ChannelEditor({ authed }: { authed: (p: string, i?: RequestInit) => Promise<Response> }) {
+  const { m } = useLang();
+  const [url, setUrl] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    void authed("/api/staff/tablets/channel")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { ota_manifest_url?: string | null } | null) => {
+        if (d) setUrl(d.ota_manifest_url ?? "");
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
+  }, [authed]);
+
+  if (!loaded) return null;
+
+  return (
+    <form
+      className="card stack"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setBusy(true);
+        setSaved(false);
+        await authed("/api/staff/tablets/channel", {
+          method: "PUT",
+          body: JSON.stringify({ ota_manifest_url: url.trim() || null }),
+        });
+        setBusy(false);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 1500);
+      }}
+    >
+      <label className="field">
+        <span className="field__label">{m.tChannel}</span>
+        <input className="input" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…/kiosk-manifest.json" />
+      </label>
+      <p className="muted" style={{ fontSize: "0.85em", margin: 0 }}>{m.tChannelHelp}</p>
+      <div className="toolbar" style={{ justifyContent: "flex-end", gap: 8 }}>
+        {saved && <span className="muted" style={{ fontSize: "0.85em" }}>{m.tSaved}</span>}
+        <button type="submit" className="btn btn--small" disabled={busy}>{m.tSave}</button>
       </div>
     </form>
   );

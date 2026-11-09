@@ -67,6 +67,17 @@ export const fleetPatch = (id: string, patch: Record<string, unknown>) =>
 export const fleetEnroll = (id: string) =>
   call(`/devices/${encodeURIComponent(id)}/enroll`, { method: "POST" });
 
+export const fleetGetDevice = (id: string) => call(`/devices/${encodeURIComponent(id)}`);
+
+/** The provisioning recipe + a short-lived APK download link, for WebUSB. */
+export const fleetProfile = () => call("/provisioning-profile");
+export const fleetApkLink = () => call("/apk");
+
+/** The fleet's default OTA channel (every provisioned tablet inherits it). */
+export const fleetGetChannel = () => call("/channel");
+export const fleetSetChannel = (url: string | null) =>
+  call("/channel", { method: "PUT", body: JSON.stringify({ ota_manifest_url: url }) });
+
 /** Guard for our own /api/staff/tablets routes: signed-in staff only. */
 export async function requireStaff(request: Request): Promise<Response | null> {
   const uid = await callerUid(request);

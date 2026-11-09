@@ -64,6 +64,27 @@ const en = {
   tStatOnline: "Online",
   tStatTotal: "Tablets",
 
+  // Provisioning a tablet (WebUSB)
+  provisionTitle: "Provision a tablet",
+  provisionIntro:
+    "Set up a new wall tablet over USB: installs the kiosk app, makes it device owner, removes extra apps, and checks the result.",
+  provisionNeedChrome: "This needs Chrome or Edge on a desktop computer (WebUSB).",
+  provisionReset1: "Factory reset the tablet (Settings → System → Reset options → Erase all data).",
+  provisionReset2: "During setup, skip the Google sign-in — device owner can't be set once an account exists.",
+  provisionReset3: "Turn on USB debugging, connect the tablet, and run “adb kill-server” on this computer.",
+  provisionDownloadApk: "Download kiosk app",
+  provisionSelectApk: "Select the app file",
+  provisionApkChosen: (name: string) => `Selected: ${name}`,
+  provisionStart: "Add and provision",
+  provisionRunning: "Provisioning…",
+  provisionNeedApk: "Download the kiosk app, then select the file.",
+  provisionDone: "The tablet is set up. Enter the code on it to finish.",
+  provisionFailed: "Provisioning stopped — see the log below.",
+  tChannel: "OTA channel",
+  tChannelHelp: "The kiosk app updates tablets pull from. New tablets you add join this automatically.",
+  tSave: "Save",
+  tSaved: "Saved",
+
   // Setup
   setupTitle: "Almost ready",
   setupIntro: "The app isn't connected to Firebase yet. To finish setting it up:",
@@ -284,6 +305,27 @@ const he: Messages = {
   tSent: "נשלח",
   tStatOnline: "מחוברים",
   tStatTotal: "טאבלטים",
+
+  // Provisioning a tablet (WebUSB)
+  provisionTitle: "הגדרת טאבלט",
+  provisionIntro:
+    "הגדרת טאבלט קיר חדש דרך USB: מתקין את אפליקציית הקיוסק, הופך אותה לבעלת המכשיר, מסיר אפליקציות מיותרות ובודק את התוצאה.",
+  provisionNeedChrome: "נדרש Chrome או Edge במחשב שולחני (WebUSB).",
+  provisionReset1: "אפסו את הטאבלט להגדרות היצרן (הגדרות ← מערכת ← איפוס ← מחיקת כל הנתונים).",
+  provisionReset2: "במהלך ההגדרה, דלגו על הכניסה לחשבון Google — אי אפשר להגדיר בעלות על המכשיר לאחר שקיים חשבון.",
+  provisionReset3: "הפעילו ניפוי USB, חברו את הטאבלט, והריצו “adb kill-server” במחשב הזה.",
+  provisionDownloadApk: "הורדת אפליקציית הקיוסק",
+  provisionSelectApk: "בחירת קובץ האפליקציה",
+  provisionApkChosen: (name: string) => `נבחר: ${name}`,
+  provisionStart: "הוספה והגדרה",
+  provisionRunning: "מגדיר…",
+  provisionNeedApk: "הורידו את אפליקציית הקיוסק ואז בחרו את הקובץ.",
+  provisionDone: "הטאבלט הוגדר. הזינו את הקוד בו כדי לסיים.",
+  provisionFailed: "ההגדרה נעצרה — ראו את היומן למטה.",
+  tChannel: "ערוץ עדכונים",
+  tChannelHelp: "ממנו הטאבלטים מושכים עדכוני אפליקציה. טאבלטים חדשים שתוסיפו מצטרפים אליו אוטומטית.",
+  tSave: "שמירה",
+  tSaved: "נשמר",
 
   setupTitle: "כמעט מוכן",
   setupIntro: "האפליקציה עדיין לא מחוברת ל־Firebase. כדי לסיים את ההתקנה:",
