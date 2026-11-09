@@ -33,7 +33,7 @@ export function Attract({
     <button type="button" className="attract" onClick={onWake} aria-label={m.kioskTapToBegin}>
       <Motes count={22} />
       <span className="attract__glow" aria-hidden />
-      <span className="attract__logo" style={{ "--logo": `url(${logo})` } as React.CSSProperties}>
+      <span className="attract__logo" style={{ "--logo": `url("${logo}")` } as React.CSSProperties}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logo} alt="" />
         <span className="attract__shine" aria-hidden />
