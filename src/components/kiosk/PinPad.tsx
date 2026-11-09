@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLang } from "@/i18n/client";
+import { buzz } from "./motion";
 
 /** A large number pad for a 4-digit PIN. Calls onComplete after the 4th digit. */
 export function PinPad({
@@ -27,6 +28,7 @@ export function PinPad({
 
   function press(d: string) {
     if (busy || pin.length >= 4) return;
+    buzz();
     const next = pin + d;
     setPin(next);
     if (next.length === 4) onComplete(next);
@@ -42,7 +44,7 @@ export function PinPad({
   });
 
   return (
-    <div className="pinpad">
+    <div className={`pinpad${error ? " pinpad--error" : ""}${busy ? " pinpad--busy" : ""}`}>
       <h2 className="pinpad__title">{title}</h2>
       {help && <p className="muted pinpad__help">{help}</p>}
       <div className="pinpad__dots" aria-label={`${pin.length} / 4`} dir="ltr">

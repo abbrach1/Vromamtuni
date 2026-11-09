@@ -14,6 +14,8 @@ import { SignUpForm } from "@/app/(app)/sign-up/SignUpForm";
 import { LangToggle } from "@/components/LangToggle";
 import { Logo } from "@/components/Logo";
 import { ProgressBoard } from "@/components/progress/ProgressBoard";
+import { Attract, type Pulse } from "./Attract";
+import { buzz, Motes, Ring, Sparks, useCountUp } from "./motion";
 import { PinPad } from "./PinPad";
 
 interface Person {
@@ -33,12 +35,14 @@ type Screen =
   | { s: "join-name" }
   | { s: "join-pin"; name: string; mode: "choose" | "confirm"; first?: string; error?: string }
   | { s: "session"; uid: string; name: string }
-  | { s: "leaving"; name: string };
+  | { s: "leaving"; name: string; met: number; total: number };
 
 const CODE_KEY = "kioskCode";
 const IDLE_SESSION_MS = 90_000; // then "Still there?"
 const IDLE_PROMPT_S = 15;
 const IDLE_PIN_MS = 45_000; // PIN / join screens go back to the names
+const IDLE_ATTRACT_MS = 60_000; // the names screen dims to the idle screen
+const FAREWELL_MS = 2_800; // shortest time the "well done" screen stays up
 
 function readCode(): string {
   try {
@@ -123,6 +127,22 @@ export function KioskApp({
   const [attempt, setAttempt] = useState(0);
   const [thanks, setThanks] = useState("");
   const [query, setQuery] = useState("");
+  const [letter, setLetter] = useState("");
+  const [pulse, setPulse] = useState<Pulse | null>(null);
+  const [attract, setAttract] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const loadPulse = useCallback(async () => {
+    if (!readCode()) return;
+    try {
+      const { status, data } = await api<Partial<Pulse>>("/api/kiosk/pulse");
+      if (status === 200 && typeof data.marked === "number" && typeof data.total === "number") {
+        setPulse({ marked: data.marked, total: data.total });
+      }
+    } catch {
+      /* keep the last number */
+    }
+  }, []);
 
   const loadRoster = useCallback(async () => {
     if (!readCode()) return setScreen({ s: "setup" });
@@ -139,15 +159,20 @@ export function KioskApp({
 
   // Start clean: nobody stays signed in if the tablet reloads.
   useEffect(() => {
-    void signOut(firebase().auth).finally(loadRoster);
-  }, [loadRoster]);
+    void signOut(firebase().auth).finally(() => {
+      void loadRoster();
+      void loadPulse();
+    });
+  }, [loadRoster, loadPulse]);
 
   const backToNames = useCallback(() => {
     setQuery("");
+    setLetter("");
     setBusy(false);
     setScreen({ s: "names" });
     void loadRoster();
-  }, [loadRoster]);
+    void loadPulse();
+  }, [loadRoster, loadPulse]);
 
   // Keep the date, parsha and names fresh while the tablet waits.
   useEffect(() => {
@@ -155,9 +180,18 @@ export function KioskApp({
     const id = setInterval(() => {
       router.refresh();
       void loadRoster();
+      void loadPulse();
     }, 10 * 60_000);
     return () => clearInterval(id);
-  }, [screen.s, router, loadRoster]);
+  }, [screen.s, router, loadRoster, loadPulse]);
+
+  // Nobody at the tablet for a while: show the idle screen.
+  const toAttract = useCallback(() => {
+    setQuery("");
+    setLetter("");
+    setAttract(true);
+  }, []);
+  useIdle(screen.s === "names" && !attract, IDLE_ATTRACT_MS, toAttract);
 
   useEffect(() => {
     if (!thanks) return;
@@ -169,6 +203,7 @@ export function KioskApp({
   useIdle(onPinScreens, IDLE_PIN_MS, backToNames);
 
   async function choosePerson(p: Person) {
+    buzz();
     setAttempt((a) => a + 1);
     let person = p;
     if (!person.hasPin) {
@@ -228,25 +263,44 @@ export function KioskApp({
   }
 
   // Leaving: let the open week save, wait for the server to confirm, then sign out.
+  // The "well done" screen stays up a moment so it can be seen; signing out
+  // still happens as soon as the writes are confirmed.
   useEffect(() => {
     if (screen.s !== "leaving") return;
     const name = screen.name.split(/\s+/)[0];
     const { auth, db } = firebase();
+    const started = Date.now();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    setSaved(false);
     void waitForPendingWrites(db)
       .catch(() => {})
       .then(() => signOut(auth))
       .then(() => {
-        setThanks(m.kioskThanks(name));
-        router.replace("/kiosk");
-        router.refresh();
-        backToNames();
+        setSaved(true);
+        timer = setTimeout(
+          () => {
+            setThanks(m.kioskThanks(name));
+            router.replace("/kiosk");
+            router.refresh();
+            backToNames();
+          },
+          Math.max(0, FAREWELL_MS - (Date.now() - started)),
+        );
       });
+    return () => clearTimeout(timer);
   }, [screen, m, router, backToNames]);
+
+  const letters = useMemo(
+    () => [...new Set(people.map((p) => initial(p.name)).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+    [people],
+  );
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return q ? people.filter((p) => p.name.toLowerCase().includes(q)) : people;
-  }, [people, query]);
+    return people.filter(
+      (p) => (!q || p.name.toLowerCase().includes(q)) && (!letter || initial(p.name) === letter),
+    );
+  }, [people, query, letter]);
 
   // ── Screens ───────────────────────────────────────────────────────────
 
@@ -259,17 +313,13 @@ export function KioskApp({
         currentWeek={currentWeek}
         today={today}
         weekNav={weekNav}
-        onDone={(name) => setScreen({ s: "leaving", name })}
+        onDone={(name, met, total) => setScreen({ s: "leaving", name, met, total })}
       />
     );
   }
 
   if (screen.s === "leaving") {
-    return (
-      <main className="kiosk kiosk--center">
-        <p className="loading">{m.kioskSigningOut}</p>
-      </main>
-    );
+    return <Farewell name={screen.name} met={screen.met} total={screen.total} saved={saved} />;
   }
 
   const header = (
@@ -290,7 +340,7 @@ export function KioskApp({
 
   if (screen.s === "loading") {
     return (
-      <main className="kiosk">
+      <main className="kiosk" key="loading">
         {header}
         <p className="loading">{m.loading}</p>
       </main>
@@ -299,7 +349,7 @@ export function KioskApp({
 
   if (screen.s === "off") {
     return (
-      <main className="kiosk">
+      <main className="kiosk kiosk--in" key="off">
         {header}
         <p className="card empty">{m.kioskOff}</p>
       </main>
@@ -308,7 +358,7 @@ export function KioskApp({
 
   if (screen.s === "setup") {
     return (
-      <main className="kiosk">
+      <main className="kiosk kiosk--in" key="setup">
         {header}
         <form
           className="card stack kiosk__narrow"
@@ -344,7 +394,7 @@ export function KioskApp({
     const { person, mode } = screen;
     const first = person.name.split(/\s+/)[0];
     return (
-      <main className="kiosk kiosk--center">
+      <main className="kiosk kiosk--center kiosk--in" key={`pin-${person.id}`}>
         <PinPad
           key={`${mode}-${attempt}`}
           title={
@@ -368,7 +418,7 @@ export function KioskApp({
 
   if (screen.s === "no-pin") {
     return (
-      <main className="kiosk kiosk--center">
+      <main className="kiosk kiosk--center kiosk--in" key="no-pin">
         <div className="card stack kiosk__narrow">
           <h2>{screen.person.name}</h2>
           <p>{m.kioskNoPin}</p>
@@ -382,7 +432,7 @@ export function KioskApp({
 
   if (screen.s === "join-name") {
     return (
-      <main className="kiosk kiosk--center">
+      <main className="kiosk kiosk--center kiosk--in" key="join-name">
         <form
           className="card stack kiosk__narrow"
           onSubmit={(e) => {
@@ -414,7 +464,7 @@ export function KioskApp({
     const { name, mode } = screen;
     const first = name.split(/\s+/)[0];
     return (
-      <main className="kiosk kiosk--center">
+      <main className="kiosk kiosk--center kiosk--in" key="join-pin">
         <PinPad
           key={`join-${mode}-${attempt}`}
           title={mode === "choose" ? m.kioskChoosePin(first) : m.kioskConfirmPin}
@@ -435,13 +485,14 @@ export function KioskApp({
 
   // Names
   return (
-    <main className="kiosk">
+    <main className="kiosk kiosk--in" key="names">
       {header}
       {thanks && (
         <p className="alert alert--ok kiosk__thanks" role="status">
           {thanks}
         </p>
       )}
+      {pulse && pulse.total > 0 && <PulseBar pulse={pulse} />}
       <div className="kiosk__bar">
         <h2>{m.kioskTapName}</h2>
         {people.length > 12 && (
@@ -455,15 +506,34 @@ export function KioskApp({
           />
         )}
       </div>
+      {people.length > 12 && letters.length > 1 && (
+        <div className="kiosk__letters" role="group" aria-label={m.kioskFind}>
+          {["", ...letters].map((l) => (
+            <button
+              key={l || "all"}
+              type="button"
+              className="kiosk__letter"
+              aria-pressed={letter === l}
+              onClick={() => {
+                buzz();
+                setLetter(l);
+              }}
+            >
+              {l || m.kioskAllLetters}
+            </button>
+          ))}
+        </div>
+      )}
       {people.length === 0 ? (
         <p className="empty">{m.kioskNoNames}</p>
       ) : (
-        <div className="kiosk__names">
-          {shown.map((p) => (
+        <div className="kiosk__names" key={`${letter}|${query.trim()}`}>
+          {shown.map((p, i) => (
             <button
               key={p.id}
               type="button"
               className="kiosk__name"
+              style={{ "--i": Math.min(i, 24) } as React.CSSProperties}
               onClick={() => void choosePerson(p)}
             >
               {p.name}
@@ -472,9 +542,79 @@ export function KioskApp({
         </div>
       )}
       <div className="kiosk__foot">
-        <button type="button" className="btn" onClick={() => setScreen({ s: "join-name" })}>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => {
+            buzz();
+            setScreen({ s: "join-name" });
+          }}
+        >
           {m.kioskNew}
         </button>
+      </div>
+      {attract && (
+        <Attract
+          pulse={pulse}
+          parsha={parsha}
+          dateLabel={dateLabel}
+          onWake={() => {
+            buzz();
+            setAttract(false);
+          }}
+        />
+      )}
+    </main>
+  );
+}
+
+/** First letter of a name, for the letter buttons. Skips a leading "R'" or quote marks. */
+function initial(name: string): string {
+  const ch = name.trim().replace(/^[^\p{L}]+/u, "").charAt(0);
+  return ch.toLocaleUpperCase();
+}
+
+/** The yeshiva-wide count under the header: a line of text over a filling gold rule. */
+function PulseBar({ pulse }: { pulse: Pulse }) {
+  const { m } = useLang();
+  const n = useCountUp(pulse.marked);
+  const pct = pulse.total > 0 ? Math.min(100, (pulse.marked / pulse.total) * 100) : 0;
+  return (
+    <div className="kiosk__pulse">
+      <span>{m.kioskPulse(n, pulse.total)}</span>
+      <span className="kiosk__pulsebar" aria-hidden>
+        <i style={{ "--p": `${pct.toFixed(1)}%` } as React.CSSProperties} />
+      </span>
+    </div>
+  );
+}
+
+/** After Done: a moment of "well done" while the week saves and he is signed out. */
+function Farewell({ name, met, total, saved }: { name: string; met: number; total: number; saved: boolean }) {
+  const { m } = useLang();
+  const first = name.split(/\s+/)[0];
+  const all = total > 0 && met === total;
+  const count = useCountUp(met, 900);
+  return (
+    <main className={`kiosk kiosk--center kiosk--in farewell${all ? " farewell--all" : ""}`} key="leaving">
+      <Motes count={all ? 26 : 16} />
+      <div className="farewell__body">
+        {total > 0 && (
+          <div className="farewell__ring">
+            <Ring value={met} max={total} size={200} stroke={6}>
+              <span className="farewell__count">
+                {count}
+                <small>/{total}</small>
+              </span>
+            </Ring>
+            {all && <Sparks big />}
+          </div>
+        )}
+        <h1 className="farewell__title">{first ? m.kioskWellDone(first) : m.kioskSaved}</h1>
+        {total > 0 && <p className="farewell__line">{all ? m.kioskAllMet : m.goalsMet(met, total, true)}</p>}
+        <p className="farewell__status" role="status">
+          {saved ? m.kioskSaved : m.kioskSigningOut}
+        </p>
       </div>
     </main>
   );
@@ -495,16 +635,21 @@ function KioskSession({
   currentWeek: ISODate;
   today: ISODate;
   weekNav: React.ReactNode;
-  onDone: (name: string) => void;
+  onDone: (name: string, met: number, total: number) => void;
 }) {
   const { m } = useLang();
+  const [tally, setTally] = useState({ met: 0, total: 0 });
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loaded, setLoaded] = useState<{ week: ISODate; progress: ProgressByWeek } | null>(null);
   const [editing, setEditing] = useState(false);
   const [prompt, setPrompt] = useState<number | null>(null);
   const [failed, setFailed] = useState(false);
 
-  const done = useCallback(() => onDone(profile?.name ?? ""), [onDone, profile]);
+  const done = useCallback(
+    () => onDone(profile?.name ?? "", tally.met, tally.total),
+    [onDone, profile, tally],
+  );
+  const onSummary = useCallback((met: number, total: number) => setTally({ met, total }), []);
 
   useEffect(() => {
     let live = true;
@@ -542,7 +687,7 @@ function KioskSession({
   const first = profile?.name.split(/\s+/)[0] ?? "";
 
   return (
-    <main className="kiosk kiosk--session">
+    <main className="kiosk kiosk--session kiosk--in">
       <header className="kiosk__sessionbar">
         <Logo size={116} className="kiosk__logo kiosk__logo--small" />
         <h1>{first ? m.hi(first) : "…"}</h1>
@@ -551,7 +696,14 @@ function KioskSession({
             {m.kioskEditCommitments}
           </button>
         )}
-        <button type="button" className="btn btn--primary kiosk__done" onClick={done}>
+        <button
+          type="button"
+          className="btn btn--primary kiosk__done"
+          onClick={() => {
+            buzz();
+            done();
+          }}
+        >
           {m.kioskDone}
         </button>
       </header>
@@ -583,6 +735,8 @@ function KioskSession({
                 smartGoal={profile.smartGoal}
                 initialProgress={loaded.progress}
                 basePath="/kiosk"
+                celebrate
+                onSummary={onSummary}
               />
             </div>
           ) : (
