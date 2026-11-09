@@ -277,7 +277,7 @@ export function KioskApp({
       <Logo size={230} className="kiosk__logo" />
       <div className="kiosk__titles">
         <span className="eyebrow">{t(program.yeshivaName)}</span>
-        <h1 className="kiosk__name">{t(program.name)}</h1>
+        <h1 className="kiosk__program">{t(program.name)}</h1>
         <p className="kiosk__tagline">{t(program.tagline)}</p>
         <p className="kiosk__week">
           {parsha && <strong>{parsha}</strong>}

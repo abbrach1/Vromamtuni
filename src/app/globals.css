@@ -1560,7 +1560,7 @@ details.req__about p {
    kept for screen readers only. Without a logo file, the name shows. */
 .logo-img ~ .brand__text .brand__name,
 .logo-img ~ .auth__name,
-.logo-img ~ .kiosk__titles .kiosk__name {
+.logo-img ~ .kiosk__titles .kiosk__program {
   position: absolute;
   width: 1px;
   height: 1px;
